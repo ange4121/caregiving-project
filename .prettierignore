@@ -1,0 +1,8 @@
+.next
+node_modules
+public/lessons
+package-lock.json
+LICENSE
+CLAUDE.md
+AGENTS.md
+docs
