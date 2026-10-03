@@ -290,6 +290,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 
 - `app/l/[id]/page.tsx`: the learner's lesson page; statically built for every folder in `public/lessons/`.
 - `app/share/[id]/page.tsx` + `components/share/ShareForm.tsx`: the author's "Send a lesson" page. Builds the parent's link and the message to paste into iMessage/WeChat; remembers the form in this browser's localStorage only.
+- `lib/report.ts`: the end-screen text the parent sends ("我练完了… 第2步试了3次（放手太早）" + English), plus `sms:` / `facetime:` links.
 - `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
 - `app/page.tsx`: lesson list with Try / Send.
 - `components/practice/`: `PracticePlayer` (step flow, hint ladder, feedback text), `PracticeStage` (phone frame, pointer capture, iOS touch blocking), `overlays` (touch replay, ghost finger, hints, hold ring).

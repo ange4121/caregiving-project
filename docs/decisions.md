@@ -2,6 +2,14 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-02 — End screen and help button
+
+- **"✓ 我会了，告诉{name}"** opens Messages to the child with a summary: lesson title ✓, then each step that took more than one try with the try count and her most common mistake, then the same in English. Clean run: "每一步都一次做对了".
+- **"📹 我需要帮助，用 FaceTime 打给{name}"** opens FaceTime to the child.
+- **Added a "📹 求助" (Help) button in the top bar during the lesson** (only when the link carries the child's contact): a parent stuck mid-lesson shouldn't have to finish to reach the child.
+- Without a contact in the link (e.g., opened from the home page), only "再练一次" shows.
+- In WeChat, a line under the buttons says to open in Safari if nothing happens; `sms:` / `facetime:` may be blocked there. Untested on a real device yet.
+
 ## 2026-10-02 — Share page
 
 - `/share/<id>`: the child picks what they call the parent (妈 / 爸 / other), what the parent calls them, their phone or Apple ID, and Simplified or Traditional. Out comes the Chinese message + link, an English version for the child, and Copy / Share buttons.

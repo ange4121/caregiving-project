@@ -5,6 +5,11 @@
   "did_it": "I did it",
   "done_title": "All done!",
   "practice_again": "Practice again",
+  "got_it": "✓ I've got it — tell {name}",
+  "need_help": "📹 I need help — FaceTime {name}",
+  "help_short": "📹 Help",
+  "child_fallback": "my child",
+  "wechat_hint": "If nothing happens: tap ⋯ at the top right and open in Safari",
   "lesson_not_found": "This lesson can't be found. Ask your child to send the link again.",
   "errors": {
     "tap_too_long": "You pressed too long. Like a doorbell: touch it and let go.",

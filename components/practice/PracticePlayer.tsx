@@ -21,6 +21,12 @@ import {
   stringsFor,
   type Lang,
 } from "@/lib/i18n";
+import {
+  buildReportMessage,
+  faceTimeLink,
+  smsLink,
+  type AttemptLog,
+} from "@/lib/report";
 import { parseShareFragment } from "@/lib/share";
 import PracticeStage from "./PracticeStage";
 import {
@@ -41,14 +47,6 @@ interface Feedback {
   samples: PointerSample[];
   replayMs: number;
   ghost: { from: Point; to: Point; action: GhostGesture; delay: number };
-}
-
-interface AttemptLog {
-  step: number;
-  ok: boolean;
-  error: GestureError | null;
-  durationMs: number;
-  ambiguousPress: boolean;
 }
 
 function expectedOf(step: ManifestStep): ExpectedGesture | null {
@@ -94,18 +92,31 @@ export default function PracticePlayer({
   const [lastError, setLastError] = useState<GestureError | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const log = useRef<AttemptLog[]>([]);
+  // Snapshot of the log when the lesson ends, for the report message.
+  const [finalLog, setFinalLog] = useState<AttemptLog[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const feedbackId = useRef(0);
+  // From the child's share link; null when the link was opened without one.
+  const [contact, setContact] = useState<string | null>(null);
+  const [childName, setChildName] = useState<string | null>(null);
+  const [inWeChat, setInWeChat] = useState(false);
 
   useEffect(() => {
     // ?lang= (for testing) beats #lang= (from the child's share link).
     const fromQuery = new URLSearchParams(window.location.search).get("lang");
-    const fromUrl = isLang(fromQuery)
-      ? fromQuery
-      : parseShareFragment(window.location.hash).lang;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL is only known on the client
+    const share = parseShareFragment(window.location.hash);
+    const fromUrl = isLang(fromQuery) ? fromQuery : share.lang;
+    // URL and browser are only known on the client.
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (isLang(fromUrl)) setLang(fromUrl);
+    setContact(share.contact);
+    setChildName(share.childName);
+    setInWeChat(/MicroMessenger/i.test(navigator.userAgent));
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
+
+  const name = childName ?? t.child_fallback;
+  const helpHref = contact ? faceTimeLink(contact) : null;
 
   useEffect(
     () => () => {
@@ -126,6 +137,7 @@ export default function PracticePlayer({
       setIndex(index + 1);
       setPhase("practice");
     } else {
+      setFinalLog([...log.current]);
       setPhase("done");
     }
   };
@@ -181,16 +193,45 @@ export default function PracticePlayer({
   };
 
   if (phase === "done") {
+    const script = lang === "zh-Hant" ? "zh-Hant" : "zh-Hans";
+    const report = buildReportMessage({
+      script,
+      titleZh:
+        script === "zh-Hant" ? manifest.title_zh_hant : manifest.title_zh_hans,
+      titleEn: manifest.title_en,
+      log: finalLog,
+    });
     return (
       <Shell lang={lang} onLang={setLang}>
         <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
           <div className="text-6xl">🎉</div>
           <h1 className="text-[28px] font-semibold">{t.done_title}</h1>
         </div>
-        <footer className="px-5 pb-4">
+        <footer className="flex flex-col gap-3 px-5 pb-4">
+          {contact && (
+            <>
+              <a
+                href={smsLink(contact, report)}
+                className="flex min-h-16 items-center justify-center rounded-2xl bg-green-500 px-4 py-3 text-center text-[22px] font-semibold text-white active:bg-green-600"
+              >
+                {t.got_it.replace("{name}", name)}
+              </a>
+              <a
+                href={faceTimeLink(contact)}
+                className="flex min-h-16 items-center justify-center rounded-2xl bg-white px-4 py-3 text-center text-[22px] font-semibold text-neutral-900 active:bg-neutral-200"
+              >
+                {t.need_help.replace("{name}", name)}
+              </a>
+              {inWeChat && (
+                <p className="text-center text-lg text-neutral-400">
+                  {t.wechat_hint}
+                </p>
+              )}
+            </>
+          )}
           <button
             onClick={restart}
-            className="h-16 w-full rounded-2xl bg-white text-[22px] font-semibold text-neutral-900 active:bg-neutral-200"
+            className="h-16 w-full rounded-2xl border border-neutral-600 text-[22px] text-neutral-200 active:bg-neutral-800"
           >
             {t.practice_again}
           </button>
@@ -209,7 +250,11 @@ export default function PracticePlayer({
         : t.try_on_picture;
 
   return (
-    <Shell lang={lang} onLang={setLang}>
+    <Shell
+      lang={lang}
+      onLang={setLang}
+      help={helpHref ? { href: helpHref, label: t.help_short } : null}
+    >
       <header className="px-5 pt-2">
         <p className="text-xl text-neutral-400">
           {t.progress
@@ -303,10 +348,13 @@ export default function PracticePlayer({
 function Shell({
   lang,
   onLang,
+  help = null,
   children,
 }: {
   lang: Lang;
   onLang: (lang: Lang) => void;
+  /** FaceTime-the-child button, shown during the lesson when the link has a contact. */
+  help?: { href: string; label: string } | null;
   children: React.ReactNode;
 }) {
   return (
@@ -320,7 +368,16 @@ function Shell({
         paddingRight: "env(safe-area-inset-right)",
       }}
     >
-      <div className="flex justify-end gap-1 px-4 pt-1">
+      <div className="flex items-center gap-1 px-4 pt-1">
+        {help && (
+          <a
+            href={help.href}
+            className="flex h-11 items-center rounded-full border border-neutral-600 px-4 text-lg text-neutral-200 active:bg-neutral-800"
+          >
+            {help.label}
+          </a>
+        )}
+        <div className="flex-1" />
         {LANGS.map((l) => (
           <button
             key={l.lang}

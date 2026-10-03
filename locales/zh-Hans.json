@@ -5,6 +5,11 @@
   "did_it": "我做好了",
   "done_title": "全部做完了！",
   "practice_again": "再练一次",
+  "got_it": "✓ 我会了，告诉{name}",
+  "need_help": "📹 我需要帮助，用 FaceTime 打给{name}",
+  "help_short": "📹 求助",
+  "child_fallback": "孩子",
+  "wechat_hint": "如果按了没反应：点右上角 ⋯，用 Safari 打开",
   "lesson_not_found": "找不到这个练习。请让孩子再发一次链接。",
   "errors": {
     "tap_too_long": "你按得太久了，像按门铃一样，碰一下就放开",
