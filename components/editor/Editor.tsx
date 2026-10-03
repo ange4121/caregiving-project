@@ -58,7 +58,6 @@ export default function Editor() {
     } catch {}
   }, [lesson, videoName, idEdited, loaded]);
 
-
   const loadFile = (file: File) => {
     if (
       lesson.steps.length > 0 &&
