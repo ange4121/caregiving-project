@@ -97,7 +97,7 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 
 **5. Chinese captions**
 - Template = fixed Chinese verb + the on-screen English label verbatim: `点一下 "Sign in"`. **No Chinese gloss of the label in the MVP** (English first); AI-generated glosses come later (see Nice to have).
-- Simplified/Traditional toggle in the player.
+- Language switch in the player: EN / 简 / 繁, also settable with `?lang=en|zh-Hans|zh-Hant`. **Default is English while Shuxin tests (`DEFAULT_LANG` in `lib/i18n.ts`); switch it to `zh-Hans` before any lesson goes to a parent.**
 
 **6. Demo lessons (made with the editor)**
 - One app lesson: Chase login (confirmed Oct 2: Chase can be screen-recorded), pixelated.
@@ -111,7 +111,8 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 1. Fuller attempt detail in the report-back message (hints used, press durations per step).
 2. AI translation via the Anthropic API (server-only route): Chinese glosses for element labels (`点一下 "Sign in"（登录）`) and free-text notes. The author reviews before publishing.
 3. "我的屏幕不一样" (my screen looks different) button.
-4. Concept cards linked from steps, pointing to Apple's official Chinese support pages.
+4. Concept cards linked from steps, pointing to Apple's official Chinese support pages. (e.g., "what is Control Center?")
+4b. Just-in-time gesture intro: the first time a lesson asks for a swipe (or tap/hold), a short "this is a swipe: press, slide, lift" demo with a quick try, attached to that step. Not a course up front (principle 6); not a standalone sandbox (non-goal). Raised by Shuxin after testing, Oct 2.
 5. "Jump to next screen change" (ffmpeg scene detection script → JSON the editor reads).
 
 ### Explicit non-goals for the MVP
@@ -287,6 +288,14 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 
 ## Code map
 
+- `app/l/[id]/page.tsx`: the learner's lesson page; statically built for every folder in `public/lessons/`.
+- `app/share/[id]/page.tsx` + `components/share/ShareForm.tsx`: the author's "Send a lesson" page. Builds the parent's link and the message to paste into iMessage/WeChat; remembers the form in this browser's localStorage only.
+- `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
+- `app/page.tsx`: lesson list with Try / Send.
+- `components/practice/`: `PracticePlayer` (step flow, hint ladder, feedback text), `PracticeStage` (phone frame, pointer capture, iOS touch blocking), `overlays` (touch replay, ghost finger, hints, hold ring).
+- `lib/lesson/`: manifest types and server-side loading.
+- `locales/`: learner strings (zh-Hans, zh-Hant).
+- `public/lessons/control-center-wifi/`: hand-made test lesson (swipe / hold / tap), stills pixelated by hand. Replace with a published lesson in stage 4.
 - `lib/gesture/`: the shared classifier. `classifyGesture` (tap / hold / swipe / wobble), `evaluateAttempt` (step + attempt → ok or one error code), hit testing and coordinate mapping. Thresholds live in `thresholds.ts`.
 
 ## Testing priorities

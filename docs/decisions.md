@@ -2,6 +2,29 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-02 — Share page
+
+- `/share/<id>`: the child picks what they call the parent (妈 / 爸 / other), what the parent calls them, their phone or Apple ID, and Simplified or Traditional. Out comes the Chinese message + link, an English version for the child, and Copy / Share buttons.
+- **The link carries the parent's language** (`#lang=zh-Hans`), so links the child sends open in Chinese even while the site default is English for testing.
+- Contact and name live only in the link fragment and in the child's own browser (localStorage). Nothing is stored server-side.
+- The message adds "做错了也没关系" ("it's fine to make mistakes") to lower the stakes. Needs native-reader review with the rest of the copy.
+- Lesson manifests may carry optional `title_zh_hans` / `title_zh_hant` for the message; without them the message leaves the title out.
+
+## 2026-10-02 — English default while testing
+
+- The author can't read the Chinese yet, so the lesson page defaults to English for now, with an EN / 简 / 繁 switch at the top (also `?lang=`).
+- Must flip `DEFAULT_LANG` to `zh-Hans` before sending lessons to parents.
+
+## 2026-10-02 — Practice screen (stage 2)
+
+- **No new dependencies.** Animations use the browser's built-in Web Animations API and CSS; no Motion/Lottie needed yet.
+- **Feedback sequence on a miss:** her touch replays first (orange dot, trail, ring that fills for as long as she held; full ring = 600 ms), then the white ghost finger starts from where she touched, glides to the target, and does the right gesture.
+- **Hint ladder:** 1st miss = feedback only; 2nd = dashed region spotlight; 3rd+ = yellow pulse on the exact target; a "wrong place" miss shows the region spotlight right away. Level 3 (replay the clip) waits for clips in stage 3/4.
+- **Live hold ring:** on hold steps only, a white ring fills around her finger while she presses, so she can see when she's held long enough.
+- **A new try interrupts feedback.** She never has to wait for an animation to finish (pace belongs to the learner).
+- **Correct:** green check at the target, "做对了！", then the next step after about 1 second.
+- Test lesson pixelates the Wi-Fi network name and the weather widget's city by hand.
+
 ## 2026-10-02 — Setup and gesture classifier
 
 **Stack installed:** Next.js 16 + React 19, TypeScript (strict), Tailwind 4, ESLint 9 + Prettier, Vitest. All MIT / Apache-2.0.

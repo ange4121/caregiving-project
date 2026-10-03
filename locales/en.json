@@ -1,0 +1,19 @@
+{
+  "progress": "Step {n} of {total}",
+  "correct": "That's right!",
+  "try_on_picture": "Try it on the picture above",
+  "did_it": "I did it",
+  "done_title": "All done!",
+  "practice_again": "Practice again",
+  "lesson_not_found": "This lesson can't be found. Ask your child to send the link again.",
+  "errors": {
+    "tap_too_long": "You pressed too long. Like a doorbell: touch it and let go.",
+    "tap_moved": "Your finger moved a little. Relax: touch, then lift straight up.",
+    "hold_too_short": "Hold a little longer, until the circle fills.",
+    "hold_moved": "Keep your finger still while you hold.",
+    "swipe_no_move": "You pressed, but your finger didn't move. Press, then slide this way.",
+    "swipe_too_short": "Slide a little farther, this way.",
+    "swipe_wrong_direction": "Wrong direction. Slide this way.",
+    "wrong_place": "Not quite the right spot. Look at the screen again."
+  }
+}

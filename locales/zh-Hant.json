@@ -1,0 +1,19 @@
+{
+  "progress": "第{n}步，共{total}步",
+  "correct": "做對了！",
+  "try_on_picture": "在上面的圖裡做一遍",
+  "did_it": "我做好了",
+  "done_title": "全部做完了！",
+  "practice_again": "再練一次",
+  "lesson_not_found": "找不到這個練習。請讓孩子再發一次連結。",
+  "errors": {
+    "tap_too_long": "你按得太久了，像按門鈴一樣，碰一下就放開",
+    "tap_moved": "手指動了一點，放輕鬆，點下去就抬起來",
+    "hold_too_short": "再按久一點，等圓圈滿了再放開",
+    "hold_moved": "按住的時候手指不要動",
+    "swipe_no_move": "你按住了，但手指沒有移動。按住以後要往這邊滑",
+    "swipe_too_short": "滑得再長一點，往這邊滑",
+    "swipe_wrong_direction": "方向反了，往這邊滑",
+    "wrong_place": "位置不對，再看看螢幕"
+  }
+}
