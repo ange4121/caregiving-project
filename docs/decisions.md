@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-02 — Publish script
+
+- **Tools:** native ffmpeg called with Node's `child_process` (no wrapper library); `tsx` (MIT) runs the TypeScript script so it can share code with the app.
+- **One redaction pass:** all pixelation boxes are applied to a temporary 720 px, 30 fps H.264 copy in the system temp folder; stills and clips are cut from that copy, so nothing unredacted reaches `public/`. The temp copy is deleted afterwards.
+- **Boxes apply from their step until the next step** (last step: to the end). Block size ≈ width / 45.
+- **Clips:** step N → step N+1, H.264, no audio, `faststart`; the last clip is capped at 4 s.
+- **Captions:** fixed templates (`lib/captions.ts`); system-gesture swipes name the edge or corner (from x, y). Chinese pending native review. The player shows the English caption under the Chinese.
+- Re-publishing clears old `step-*`, `clip-*`, and `manifest.json` first.
+- Test lesson: about 6 s to publish; 3 stills ≈ 250 KB, 3 clips ≈ 620 KB total.
+
 ## 2026-10-02 — End screen and help button
 
 - **"✓ 我会了，告诉{name}"** opens Messages to the child with a summary: lesson title ✓, then each step that took more than one try with the try count and her most common mistake, then the same in English. Clean run: "每一步都一次做对了".

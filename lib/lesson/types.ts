@@ -28,6 +28,9 @@ export interface LessonStep {
 export interface Lesson {
   id: string;
   title_en: string;
+  /** Optional Chinese titles, used in the share and report messages. */
+  title_zh_hans?: string;
+  title_zh_hant?: string;
   ios_version: string;
   video: { width: number; height: number; duration_ms: number };
   steps: LessonStep[];
@@ -45,8 +48,5 @@ export interface ManifestStep extends LessonStep {
 }
 
 export interface Manifest extends Omit<Lesson, "steps"> {
-  /** Optional Chinese titles, used in the share message. */
-  title_zh_hans?: string;
-  title_zh_hant?: string;
   steps: ManifestStep[];
 }

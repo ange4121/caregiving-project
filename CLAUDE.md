@@ -279,7 +279,7 @@ npm run lint
 npm run test         # Vitest, once
 npm run test:watch
 npm run format       # Prettier
-npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/lessons/<id>   # not built yet (stage 4)
+npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/lessons/<id>
 ```
 
 - **Next.js 16** has breaking changes from older versions. Before writing Next.js code, check the bundled docs in `node_modules/next/dist/docs/` (see `AGENTS.md`).
@@ -296,7 +296,9 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `components/practice/`: `PracticePlayer` (step flow, hint ladder, feedback text), `PracticeStage` (phone frame, pointer capture, iOS touch blocking), `overlays` (touch replay, ghost finger, hints, hold ring).
 - `lib/lesson/`: manifest types and server-side loading.
 - `locales/`: learner strings (zh-Hans, zh-Hant).
-- `public/lessons/control-center-wifi/`: hand-made test lesson (swipe / hold / tap), stills pixelated by hand. Replace with a published lesson in stage 4.
+- `scripts/publish-lesson.ts` + `scripts/publish/plan.ts`: the publish script (runs ffmpeg via `child_process`; `plan.ts` holds the tested time ranges and filter graph). Pixelates everything in one pass to a temp video outside the repo, then cuts stills and clips from it.
+- `lib/captions.ts`: caption templates (EN, zh-Hans, zh-Hant) from gesture + label.
+- `public/lessons/control-center-wifi/`: test lesson (swipe / hold / tap), now produced by the publish script. Its `lesson.json` lives in `fixtures/` (gitignored) next to the recording.
 - `lib/gesture/`: the shared classifier. `classifyGesture` (tap / hold / swipe / wobble), `evaluateAttempt` (step + attempt → ok or one error code), hit testing and coordinate mapping. Thresholds live in `thresholds.ts`.
 
 ## Testing priorities
@@ -312,6 +314,8 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - **Reverse direction:** native iOS broadcast extension for one-tap "record and send to my child"; author annotates the parent's own recording.
 - **Judgment lessons:** scam texts, permission prompts, pop-ups, using the same player with choice buttons.
 - **Concept cards and an icon glossary** in Chinese.
+- **Class mode** for libraries and senior centers: a volunteer runs a session where each senior practices the same lessons on their own phone and the volunteer sees who's stuck.
+- **Read-aloud** of captions and feedback (Mandarin, Cantonese) for parents who don't read comfortably.
 - More gestures; storage via Supabase or in-browser processing via ffmpeg.wasm.
 
 ## How to work with Shuxin

@@ -264,6 +264,13 @@ export default function PracticePlayer({
         <h1 className="mt-1 text-[26px] font-semibold leading-snug">
           {captionFor(step, lang)}
         </h1>
+        {lang !== "en" && (
+          // English under the Chinese: names the thing as it appears on screen,
+          // and teaches words like "swipe" that Apple's own help uses.
+          <p lang="en" className="mt-1 text-lg leading-snug text-neutral-400">
+            {step.caption_en}
+          </p>
+        )}
       </header>
 
       <PracticeStage

@@ -21,12 +21,19 @@
       "target_radius": 0.12,
       "element_label": "Control Center",
       "note_en": "",
-      "blur": [],
+      "blur": [
+        {
+          "x": 0.549,
+          "y": 0.5715,
+          "w": 0.278,
+          "h": 0.0383
+        }
+      ],
       "still": "step-0.jpg",
-      "clip": null,
-      "caption_en": "Swipe down from the top-right corner to open Control Center",
-      "caption_zh_hans": "从右上角往下滑，打开控制中心",
-      "caption_zh_hant": "從右上角往下滑，打開控制中心"
+      "clip": "clip-0.mp4",
+      "caption_en": "Swipe down from the top-right corner of the screen",
+      "caption_zh_hans": "从屏幕右上角往下滑",
+      "caption_zh_hant": "從螢幕右上角往下滑"
     },
     {
       "index": 1,
@@ -37,14 +44,21 @@
       "swipe_direction": null,
       "system_gesture": false,
       "target_radius": 0.17,
-      "element_label": "network buttons",
+      "element_label": "Wi-Fi",
       "note_en": "",
-      "blur": [],
+      "blur": [
+        {
+          "x": 0.125,
+          "y": 0.3525,
+          "w": 0.2917,
+          "h": 0.0268
+        }
+      ],
       "still": "step-1.jpg",
-      "clip": null,
-      "caption_en": "Press and hold the network buttons (top left)",
-      "caption_zh_hans": "长按左上角的网络按钮",
-      "caption_zh_hant": "長按左上角的網路按鈕"
+      "clip": "clip-1.mp4",
+      "caption_en": "Press and hold \"Wi-Fi\"",
+      "caption_zh_hans": "长按 \"Wi-Fi\"",
+      "caption_zh_hant": "長按 \"Wi-Fi\""
     },
     {
       "index": 2,
@@ -57,9 +71,22 @@
       "target_radius": 0.17,
       "element_label": "Wi-Fi",
       "note_en": "",
-      "blur": [],
+      "blur": [
+        {
+          "x": 0.125,
+          "y": 0.3525,
+          "w": 0.2917,
+          "h": 0.0268
+        },
+        {
+          "x": 0.264,
+          "y": 0.225,
+          "w": 0.45,
+          "h": 0.31
+        }
+      ],
       "still": "step-2.jpg",
-      "clip": null,
+      "clip": "clip-2.mp4",
       "caption_en": "Tap \"Wi-Fi\"",
       "caption_zh_hans": "点一下 \"Wi-Fi\"",
       "caption_zh_hant": "點一下 \"Wi-Fi\""
