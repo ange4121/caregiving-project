@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-02 — Editor, first pass
+
+- **No libraries:** native `<video>` + an SVG overlay with Pointer Events. Konva/Fabric would be extra weight for dots, arrows, and rectangles.
+- **Annotate by doing** uses the learner's classifier on the author's mouse: click = tap, press ≥ 600 ms = hold, drag ≥ 40 px = swipe. A 15–40 px wobble is rejected with a hint rather than guessed.
+- A swipe starting within 6% of the frame edge is pre-ticked as "from the screen edge" (system gesture); the author can untick it.
+- **Re-marking at the same moment (±50 ms) redoes that step's gesture** and keeps its label, note, and boxes. That's the "undo" for a bad mark.
+- Clicking a playing video only pauses it (never marks).
+- The draft (not the video) autosaves to localStorage; after a refresh the author reloads the same file to continue.
+- Video loads by object URL; nothing is uploaded. Chrome and Safari on Mac play iPhone HEVC recordings; Firefox doesn't.
+
 ## 2026-10-02 — Publish script
 
 - **Tools:** native ffmpeg called with Node's `child_process` (no wrapper library); `tsx` (MIT) runs the TypeScript script so it can share code with the app.

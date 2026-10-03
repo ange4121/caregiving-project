@@ -289,6 +289,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 ## Code map
 
 - `app/l/[id]/page.tsx`: the learner's lesson page; statically built for every folder in `public/lessons/`.
+- `app/editor/page.tsx` + `components/editor/`: the annotation editor (`Editor` state + autosave, `VideoPanel` video/scrub/annotate-by-doing, `StepPanel` step list + details + caption preview). `lib/editor/draft.ts`: pure, tested editing operations.
 - `app/share/[id]/page.tsx` + `components/share/ShareForm.tsx`: the author's "Send a lesson" page. Builds the parent's link and the message to paste into iMessage/WeChat; remembers the form in this browser's localStorage only.
 - `lib/report.ts`: the end-screen text the parent sends ("我练完了… 第2步试了3次（放手太早）" + English), plus `sms:` / `facetime:` links.
 - `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
