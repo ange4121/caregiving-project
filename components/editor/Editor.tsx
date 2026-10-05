@@ -266,6 +266,14 @@ export default function Editor() {
   };
 
   const problems = draftProblems(lesson);
+  // Why Publish is off, in words, shown next to the button.
+  const publishBlocker = !src
+    ? "Load the recording first."
+    : helper === "uploading" || helper === "analyzing"
+      ? "Getting the recording ready…"
+      : !token
+        ? "Publishing only works on your laptop, at http://localhost."
+        : (problems[0] ?? null);
   const needsVideo = !src && lesson.steps.length > 0 && videoName;
 
   return (
@@ -296,14 +304,17 @@ export default function Editor() {
         >
           Download lesson.json
         </button>
+        {publishBlocker && !publishing && (
+          <span className="max-w-xs text-right text-xs leading-tight text-amber-700">
+            {publishBlocker}
+            {problems.length > 1 && token && (
+              <> (+{problems.length - 1} more, listed under Steps)</>
+            )}
+          </span>
+        )}
         <button
           onClick={publish}
-          disabled={!token || problems.length > 0 || publishing}
-          title={
-            !token
-              ? "Publishing works when the editor runs on your laptop"
-              : problems[0]
-          }
+          disabled={!!publishBlocker || publishing}
           className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-40"
         >
           {publishing ? "Publishing…" : "Publish"}
@@ -452,7 +463,7 @@ export default function Editor() {
             <div className="border-t border-neutral-200 bg-amber-50 px-4 py-2 text-xs text-amber-900">
               <p className="font-semibold">Before publishing:</p>
               <ul className="list-disc pl-4">
-                {problems.slice(0, 4).map((p) => (
+                {problems.map((p) => (
                   <li key={p}>{p}</li>
                 ))}
               </ul>
