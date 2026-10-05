@@ -42,10 +42,10 @@ describe("ranges", () => {
       { startMs: 9000, endMs: 20000 },
     ]);
   });
-  it("clips match, but the last clip is capped at 4 s", () => {
+  it("clips match, but the last clip is capped at 2.5 s", () => {
     expect(clipRanges(steps, 20000)[2]).toEqual({
       startMs: 9000,
-      endMs: 13000,
+      endMs: 11500,
     });
     expect(clipRanges(steps, 10000)[2]).toEqual({
       startMs: 9000,

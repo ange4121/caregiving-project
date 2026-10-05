@@ -6,8 +6,11 @@ import type { LessonStep } from "@/lib/lesson/types";
 /** Published media width in px (phones; keeps clips small). */
 export const OUT_WIDTH = 720;
 export const OUT_FPS = 30;
-/** The last clip has no next step to stop at; cap it. */
-export const LAST_CLIP_MAX_MS = 4000;
+/**
+ * The last clip has no next step to stop at; cap it short so it ends on the
+ * result, before the author starts closing things.
+ */
+export const LAST_CLIP_MAX_MS = 2500;
 
 export interface Range {
   startMs: number;

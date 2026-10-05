@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { classifyGesture, type DisplayRect } from "@/lib/gesture";
 import {
+  addBox,
   addSelfStep,
+  boxFromDrag,
+  copyBoxesToNext,
+  removeBox,
   deleteStep,
   draftProblems,
   emptyLesson,
@@ -190,5 +194,36 @@ describe("draftProblems", () => {
       "Lesson needs an id.",
       'Step 1: name the thing on screen (e.g. "Sign in").',
     ]);
+  });
+});
+
+describe("redaction boxes", () => {
+  it("normalizes a drag in any direction and drops tiny ones", () => {
+    expect(boxFromDrag({ x: 0.6, y: 0.5 }, { x: 0.2, y: 0.3 })).toEqual({
+      x: 0.2,
+      y: 0.3,
+      w: 0.39999999999999997,
+      h: 0.2,
+    });
+    expect(boxFromDrag({ x: 0.5, y: 0.5 }, { x: 0.505, y: 0.6 })).toBeNull();
+    expect(boxFromDrag({ x: -1, y: 0.5 }, { x: 0.1, y: 2 })).toEqual({
+      x: 0,
+      y: 0.5,
+      w: 0.1,
+      h: 0.5,
+    });
+  });
+
+  it("adds, removes, and copies boxes to the next step", () => {
+    let l = markStep(emptyLesson(), 1000, tap).lesson;
+    l = markStep(l, 2000, tap).lesson;
+    const box = { x: 0.1, y: 0.1, w: 0.2, h: 0.05 };
+    l = addBox(l, 0, box);
+    l = copyBoxesToNext(l, 0);
+    l = copyBoxesToNext(l, 0); // no duplicates
+    expect(l.steps[1].blur).toEqual([box]);
+    l = removeBox(l, 0, 0);
+    expect(l.steps[0].blur).toEqual([]);
+    expect(copyBoxesToNext(l, 1)).toBe(l); // last step: nothing to copy to
   });
 });

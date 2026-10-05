@@ -74,8 +74,9 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 | Moved the wrong way | Swipe | 方向反了，往这边滑 |
 | Right gesture, wrong place | Any | 位置不对，再看看屏幕 (then region hint) |
 
-**2. Watch mode**
-- Still + caption → "看一遍" (replay clip) / "下一步" (next). Same player, no gesture checking.
+**2. Watch mode** (built)
+- Start screen offers "👀 先看一遍怎么做" (watch first) or "✋ 开始练习" (practice).
+- Per step: the ghost finger demonstrates the gesture on the still, then the clip plays and its last frame stays. "下一步" (next) / "↺ 再看一遍" (again); the last step offers "现在自己练习" (now practice). Nothing advances on its own.
 
 **3. Annotation editor (desktop, limited)**
 - Load a local recording (object URL; never uploaded).
@@ -294,7 +295,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `lib/report.ts`: the end-screen text the parent sends ("我练完了… 第2步试了3次（放手太早）" + English), plus `sms:` / `facetime:` links.
 - `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
 - `app/page.tsx`: lesson list with Try / Send.
-- `components/practice/`: `PracticePlayer` (step flow, hint ladder, feedback text), `PracticeStage` (phone frame, pointer capture, iOS touch blocking), `overlays` (touch replay, ghost finger, hints, hold ring).
+- `components/practice/`: `PracticePlayer` (start screen → Watch or Practice), `PracticeMode` (step flow, hint ladder incl. "看一遍" clip replay, clips after correct steps, end screen), `WatchMode` (ghost finger demonstrates each step, then its clip; learner taps Next), `PracticeStage` (phone frame, pointer capture, iOS touch blocking, clip playback over the still), `overlays` (touch replay, ghost finger, hints, hold ring), `lesson.tsx` (shared shell, header, URL/share context).
 - `lib/lesson/`: manifest types and server-side loading.
 - `locales/`: learner strings (zh-Hans, zh-Hant).
 - `lib/publish/`: server-only media pipeline. `publish.ts` (pixelate everything in one pass to a temp video outside the repo, then cut stills and clips), `plan.ts` (tested time ranges + ffmpeg filter graph), `analyze.ts` (find moments with ffmpeg `freezedetect` + guess touch points), `ffmpeg.ts` (spawn helpers). `scripts/publish-lesson.ts` is the command-line wrapper.

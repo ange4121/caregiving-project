@@ -22,6 +22,12 @@ interface Props {
   renderHtml?: (rect: DisplayRect) => React.ReactNode;
   /** Shown under the finger while pressing (e.g., the hold ring). */
   renderPress?: (at: Point) => React.ReactNode;
+  /** The step's clip (step → next screen), preloaded and played over the still. */
+  clipSrc?: string | null;
+  clipPlaying?: boolean;
+  /** Keep the clip's last frame on screen after it ends (watch mode). */
+  clipHold?: boolean;
+  onClipEnd?: () => void;
 }
 
 /** Fit the still inside the stage, leaving room for margins and the bezel. */
@@ -43,12 +49,52 @@ export default function PracticeStage({
   renderSvg,
   renderHtml,
   renderPress,
+  clipSrc = null,
+  clipPlaying = false,
+  clipHold = false,
+  onClipEnd,
 }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const samplesRef = useRef<PointerSample[]>([]);
   const pointerIdRef = useRef<number | null>(null);
   const [pressAt, setPressAt] = useState<Point | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const onClipEndRef = useRef(onClipEnd);
+  useEffect(() => {
+    onClipEndRef.current = onClipEnd;
+  });
+
+  // Play the clip from the start whenever asked; if the browser refuses
+  // (autoplay rules, missing file) or stalls, move on rather than get stuck.
+  const laidOut = size !== null;
+  useEffect(() => {
+    const v = videoRef.current;
+    // Wait until the stage has measured itself and the video is on screen.
+    if (!clipPlaying || !laidOut) return;
+    if (!v) {
+      onClipEndRef.current?.();
+      return;
+    }
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      onClipEndRef.current?.();
+    };
+    v.currentTime = 0;
+    v.play().catch(finish);
+    const limitMs =
+      (Number.isFinite(v.duration) ? v.duration : 8) * 1000 + 2000;
+    const t = setTimeout(finish, limitMs);
+    v.addEventListener("ended", finish);
+    return () => {
+      done = true;
+      clearTimeout(t);
+      v.removeEventListener("ended", finish);
+      v.pause();
+    };
+  }, [clipPlaying, laidOut]);
 
   useLayoutEffect(() => {
     const el = stageRef.current;
@@ -152,6 +198,24 @@ export default function PracticeStage({
               height: rect.height,
             }}
           />
+          {clipSrc && (
+            <video
+              ref={videoRef}
+              src={clipSrc}
+              muted
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              className="pointer-events-none absolute rounded-[1.7rem]"
+              style={{
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height,
+                opacity: clipPlaying || clipHold ? 1 : 0,
+              }}
+            />
+          )}
           <svg className="pointer-events-none absolute inset-0 h-full w-full">
             {renderSvg(rect)}
             {pressAt && renderPress?.(pressAt)}

@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
+  addBox,
   addSelfStep,
+  copyBoxesToNext,
+  removeBox,
   deleteStep,
   draftProblems,
   emptyLesson,
@@ -43,6 +46,7 @@ export default function Editor() {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
   const [currentMoment, setCurrentMoment] = useState<number | null>(null);
+  const [mode, setMode] = useState<"steps" | "pixelate">("steps");
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState<
     { ok: true; id: string } | { ok: false; error: string } | null
@@ -378,7 +382,14 @@ export default function Editor() {
             setSelected(r.index);
           }}
           onSelect={select}
-          guess={guessHere}
+          guess={mode === "steps" ? guessHere : null}
+          mode={mode}
+          onMode={setMode}
+          onBox={(i, box) => {
+            setLesson((l) => addBox(l, i, box));
+            setSelected(i);
+          }}
+          onRemoveBox={(i, k) => setLesson((l) => removeBox(l, i, k))}
         />
 
         <aside className="flex w-[380px] shrink-0 flex-col overflow-y-auto border-l border-neutral-200">
@@ -453,6 +464,11 @@ export default function Editor() {
               moments.length > 0 && goNextPending(currentMoment)
             }
             onChange={(i, patch) => setLesson((l) => updateStep(l, i, patch))}
+            onCopyBoxes={(i) => setLesson((l) => copyBoxesToNext(l, i))}
+            onPixelate={(i) => {
+              setMode("pixelate");
+              select(i);
+            }}
             onDelete={(i) => {
               setLesson((l) => deleteStep(l, i));
               setSelected(null);

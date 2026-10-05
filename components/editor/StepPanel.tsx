@@ -27,6 +27,8 @@ interface Props {
   onDelete: (index: number) => void;
   /** Enter in the label field: move on (to the next suggested moment). */
   onLabelEnter?: () => void;
+  onCopyBoxes: (index: number) => void;
+  onPixelate: (index: number) => void;
 }
 
 export default function StepPanel({
@@ -36,6 +38,8 @@ export default function StepPanel({
   onChange,
   onDelete,
   onLabelEnter,
+  onCopyBoxes,
+  onPixelate,
 }: Props) {
   const step = selected !== null ? steps[selected] : null;
   const labelRef = useRef<HTMLInputElement>(null);
@@ -80,6 +84,7 @@ export default function StepPanel({
                   {GESTURE_LABEL[s.gesture]}
                   {s.swipe_direction ? ` ${ARROW[s.swipe_direction]}` : ""}
                   {s.system_gesture ? " · from edge" : ""} · {fmtTime(s.t_ms)}
+                  {s.blur.length > 0 && ` · ▦ ${s.blur.length}`}
                 </span>
               </span>
             </button>
@@ -196,6 +201,28 @@ export default function StepPanel({
               className="mt-1 h-10 w-full rounded-lg border border-neutral-300 px-3"
             />
           </label>
+
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-neutral-600">
+              ▦ {step.blur.length} private{" "}
+              {step.blur.length === 1 ? "area" : "areas"} pixelated
+            </span>
+            <button
+              onClick={() => onPixelate(selected)}
+              className="rounded-full border border-fuchsia-300 bg-white px-2.5 py-0.5 text-fuchsia-700"
+            >
+              Add / edit
+            </button>
+            {step.blur.length > 0 && selected + 1 < steps.length && (
+              <button
+                onClick={() => onCopyBoxes(selected)}
+                className="rounded-full border border-neutral-300 bg-white px-2.5 py-0.5"
+                title="For private info that stays on screen"
+              >
+                Copy to step {selected + 2}
+              </button>
+            )}
+          </div>
 
           <CaptionPreview step={step} />
 

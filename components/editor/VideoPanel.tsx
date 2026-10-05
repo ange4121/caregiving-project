@@ -9,11 +9,13 @@ import {
   type PointerSample,
 } from "@/lib/gesture";
 import {
+  boxFromDrag,
   gestureFromClassification,
   SAME_TIME_MS,
+  stepAtTime,
   type GestureFields,
 } from "@/lib/editor/draft";
-import type { Lesson } from "@/lib/lesson/types";
+import type { Lesson, RedactBox } from "@/lib/lesson/types";
 import { LiveHoldRing } from "@/components/practice/overlays";
 
 const FRAME_S = 1 / 30;
@@ -47,6 +49,11 @@ interface Props {
   onSelect: (index: number) => void;
   /** Suggested touch point (normalized) for the current moment, if any. */
   guess?: Point | null;
+  /** "steps": do gestures on the video. "pixelate": drag boxes over private info. */
+  mode: "steps" | "pixelate";
+  onMode: (mode: "steps" | "pixelate") => void;
+  onBox: (stepIndex: number, box: RedactBox) => void;
+  onRemoveBox: (stepIndex: number, boxIndex: number) => void;
 }
 
 export default function VideoPanel({
@@ -60,6 +67,10 @@ export default function VideoPanel({
   onMark,
   onSelect,
   guess = null,
+  mode,
+  onMode,
+  onBox,
+  onRemoveBox,
 }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -71,6 +82,8 @@ export default function VideoPanel({
 
   const { width: vw, height: vh, duration_ms } = lesson.video;
   const rect = size && vw ? fitRect(size.w, size.h, vw, vh) : null;
+  // Boxes belong to the step whose range (this step → next step) we're in.
+  const activeStep = stepAtTime(lesson, timeMs);
 
   useLayoutEffect(() => {
     const el = stageRef.current;
@@ -125,6 +138,10 @@ export default function VideoPanel({
       v.pause();
       return; // First click on a playing video just pauses it.
     }
+    if (mode === "pixelate" && activeStep === null) {
+      setHint("Mark a step first. Boxes apply from a step until the next one.");
+      return;
+    }
     e.preventDefault();
     try {
       stageRef.current?.setPointerCapture(e.pointerId);
@@ -148,6 +165,18 @@ export default function VideoPanel({
     setPress(null);
     if (!rect || !videoRef.current) return;
     samples.current.push(local(e));
+    if (mode === "pixelate") {
+      const a = samples.current[0];
+      const b = samples.current[samples.current.length - 1];
+      const norm = (p: Point) => ({
+        x: (p.x - rect.left) / rect.width,
+        y: (p.y - rect.top) / rect.height,
+      });
+      const box = boxFromDrag(norm(a), norm(b));
+      if (box && activeStep !== null) onBox(activeStep, box);
+      else setHint("Drag to draw a box over the private part.");
+      return;
+    }
     const fields = gestureFromClassification(
       classifyGesture(samples.current),
       rect,
@@ -218,6 +247,36 @@ export default function VideoPanel({
             onPause={() => setPlaying(false)}
           />
         )}
+        {rect &&
+          activeStep !== null &&
+          lesson.steps[activeStep].blur.map((b, k) => (
+            <div
+              key={k}
+              className={`absolute border-2 border-dashed ${
+                mode === "pixelate" ? "border-fuchsia-600" : "border-white/70"
+              }`}
+              style={{
+                left: rect.left + b.x * rect.width,
+                top: rect.top + b.y * rect.height,
+                width: b.w * rect.width,
+                height: b.h * rect.height,
+                // A blur preview; publishing pixelates.
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+              }}
+            >
+              {mode === "pixelate" && (
+                <button
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => onRemoveBox(activeStep, k)}
+                  aria-label="Remove box"
+                  className="absolute -right-3 -top-3 h-6 w-6 rounded-full bg-fuchsia-600 text-sm font-bold leading-6 text-white"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
         {rect && (
           <svg className="pointer-events-none absolute inset-0 h-full w-full">
             {here.map(({ s, i }) => {
@@ -303,7 +362,19 @@ export default function VideoPanel({
                   </g>
                 );
               })()}
-            {press && (
+            {press && mode === "pixelate" && (
+              <rect
+                x={Math.min(press.start.x, press.now.x)}
+                y={Math.min(press.start.y, press.now.y)}
+                width={Math.abs(press.now.x - press.start.x)}
+                height={Math.abs(press.now.y - press.start.y)}
+                fill="rgba(192,38,211,0.2)"
+                stroke="#c026d3"
+                strokeWidth={2}
+                strokeDasharray="6 4"
+              />
+            )}
+            {press && mode === "steps" && (
               <>
                 <line
                   x1={press.start.x}
@@ -336,6 +407,29 @@ export default function VideoPanel({
 
       {src && (
         <div className="border-t border-neutral-200 bg-white px-4 py-3">
+          <div className="mb-2 flex items-center gap-2 text-sm">
+            <div className="flex shrink-0 overflow-hidden whitespace-nowrap rounded-lg border border-neutral-300">
+              <button
+                onClick={() => onMode("steps")}
+                className={`px-3 py-1 ${mode === "steps" ? "bg-neutral-900 text-white" : "bg-white"}`}
+              >
+                ✋ Mark steps
+              </button>
+              <button
+                onClick={() => onMode("pixelate")}
+                className={`px-3 py-1 ${mode === "pixelate" ? "bg-fuchsia-600 text-white" : "bg-white"}`}
+              >
+                ▦ Pixelate
+              </button>
+            </div>
+            <span className="text-xs text-neutral-500">
+              {mode === "pixelate"
+                ? activeStep === null
+                  ? "Mark a step first."
+                  : `Drag over anything private. Applies from step ${activeStep + 1} until the next step.`
+                : null}
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => {

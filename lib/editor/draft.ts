@@ -1,6 +1,6 @@
 import type { Classification, DisplayRect } from "@/lib/gesture";
 import { toNormalized } from "@/lib/gesture";
-import type { Lesson, LessonStep } from "@/lib/lesson/types";
+import type { Lesson, LessonStep, RedactBox } from "@/lib/lesson/types";
 
 // Pure editing operations on a lesson draft. The editor UI calls these; they
 // never mutate their input.
@@ -172,6 +172,64 @@ export function deleteStep(lesson: Lesson, index: number): Lesson {
   return {
     ...lesson,
     steps: reindex(lesson.steps.filter((_, i) => i !== index)),
+  };
+}
+
+/** Smallest box worth keeping (fraction of the frame), so a stray click isn't a box. */
+const MIN_BOX = 0.01;
+
+/** Normalize a dragged rectangle (any corner order) to 0–1, or null if tiny. */
+export function boxFromDrag(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): RedactBox | null {
+  const clamp = (v: number) => Math.min(Math.max(v, 0), 1);
+  const x1 = clamp(Math.min(a.x, b.x));
+  const y1 = clamp(Math.min(a.y, b.y));
+  const x2 = clamp(Math.max(a.x, b.x));
+  const y2 = clamp(Math.max(a.y, b.y));
+  if (x2 - x1 < MIN_BOX || y2 - y1 < MIN_BOX) return null;
+  return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+}
+
+export function addBox(lesson: Lesson, index: number, box: RedactBox): Lesson {
+  return {
+    ...lesson,
+    steps: lesson.steps.map((s, i) =>
+      i === index ? { ...s, blur: [...s.blur, box] } : s,
+    ),
+  };
+}
+
+export function removeBox(
+  lesson: Lesson,
+  index: number,
+  boxIndex: number,
+): Lesson {
+  return {
+    ...lesson,
+    steps: lesson.steps.map((s, i) =>
+      i === index ? { ...s, blur: s.blur.filter((_, k) => k !== boxIndex) } : s,
+    ),
+  };
+}
+
+/**
+ * Copy a step's boxes onto the next step (skipping exact duplicates), for
+ * private info that stays on screen across steps.
+ */
+export function copyBoxesToNext(lesson: Lesson, index: number): Lesson {
+  const from = lesson.steps[index];
+  const to = lesson.steps[index + 1];
+  if (!from || !to) return lesson;
+  const key = (b: RedactBox) => [b.x, b.y, b.w, b.h].join(",");
+  const have = new Set(to.blur.map(key));
+  const added = from.blur.filter((b) => !have.has(key(b)));
+  return {
+    ...lesson,
+    steps: lesson.steps.map((s, i) =>
+      i === index + 1 ? { ...s, blur: [...s.blur, ...added] } : s,
+    ),
   };
 }
 

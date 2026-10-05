@@ -2,6 +2,15 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-04 — Pixelation boxes, clips, Watch mode
+
+- **Editor pixelate mode:** a "Mark steps / Pixelate" switch. Drag a box over private info; it belongs to the step whose range you're in (that step → the next step). The editor previews with a blur (`backdrop-filter`); publishing pixelates. "Copy to step N+1" for info that stays on screen. Boxes before the first step aren't needed (no still or clip covers that time).
+- **Clips in Practice:** after a correct step, a short green check (0.7 s), then the step's clip plays over the still, then the next step. "Do it yourself" steps play their clip after "我做好了".
+- **Hint level 3:** after 3 misses, "▶ 看一遍" plays the clip and returns to the same step.
+- **Start screen + Watch mode:** the learner chooses watch first or practice. Watch mode demonstrates each step with the ghost finger, then plays the clip and keeps its last frame; the learner taps Next (principle 8: nothing advances on its own).
+- If a clip can't play (autoplay blocked, missing file) or stalls, the player moves on instead of getting stuck.
+- **Last clip capped at 2.5 s** (was 4 s) so it ends on the result rather than on the author closing things.
+
 ## 2026-10-04 — Suggested moments + local helper + Publish button
 
 - **Moment finding uses ffmpeg `freezedetect`** (screen still ≥ 0.4 s, then changes), not scene detection: scene scores missed small local changes like the Wi-Fi menu. Each freeze end is a suggested moment; the editor jumps to ~100 ms before the change.

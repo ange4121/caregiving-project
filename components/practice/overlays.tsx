@@ -121,12 +121,19 @@ export function GhostFinger({
   to,
   action,
   delay,
+  onDone,
 }: {
   from: Point;
   to: Point;
   action: GhostGesture;
   delay: number;
+  /** Called once the demonstration has finished. */
+  onDone?: () => void;
 }) {
+  const onDoneRef = useRef(onDone);
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  });
   const fingerRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<SVGCircleElement>(null);
   const trailRef = useRef<SVGLineElement>(null);
@@ -204,6 +211,7 @@ export function GhostFinger({
         ),
       );
     }
+    anims[0].finished.then(() => onDoneRef.current?.()).catch(() => {});
     return () => anims.forEach((a) => a.cancel());
   }, [from, to, end, action, delay, total, ACT, ringC, swipeLen]);
 
