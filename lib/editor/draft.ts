@@ -120,18 +120,27 @@ export function markStep(
   return { lesson: { ...lesson, steps: sorted }, index };
 }
 
-/** Add a "do it yourself" step at `t_ms` (no gesture is checked). */
+/**
+ * Add a "do it yourself" step at `t_ms` (no gesture is checked). If a step
+ * already sits at this moment it's left alone and selected instead, so a
+ * marked gesture is never overwritten by accident.
+ */
 export function addSelfStep(
   lesson: Lesson,
   t_ms: number,
-): { lesson: Lesson; index: number } {
-  return markStep(lesson, t_ms, {
+): { lesson: Lesson; index: number; existed: boolean } {
+  const existing = lesson.steps.findIndex(
+    (s) => Math.abs(s.t_ms - t_ms) < SAME_TIME_MS,
+  );
+  if (existing !== -1) return { lesson, index: existing, existed: true };
+  const r = markStep(lesson, t_ms, {
     gesture: "self",
     x: null,
     y: null,
     swipe_direction: null,
     system_gesture: false,
   });
+  return { ...r, existed: false };
 }
 
 export function updateStep(
@@ -149,11 +158,9 @@ export function updateStep(
     } else if (!next.swipe_direction) {
       next.swipe_direction = "up";
     }
-    if (next.gesture === "self") {
-      next.x = null;
-      next.y = null;
-      next.target_radius = null;
-    } else if (next.target_radius === null) {
+    // A "do it yourself" step keeps any position it had (the player ignores
+    // it), so switching back to tap/hold/swipe doesn't lose the spot.
+    if (next.gesture !== "self" && next.target_radius === null) {
       next.target_radius = DEFAULT_TARGET_RADIUS;
     }
     return next;
@@ -185,6 +192,10 @@ export function draftProblems(lesson: Lesson): string[] {
   if (lesson.steps.length === 0) problems.push("Mark at least one step.");
   lesson.steps.forEach((s, i) => {
     const n = `Step ${i + 1}`;
+    if (s.gesture !== "self" && (s.x === null || s.y === null))
+      problems.push(
+        `${n}: show where. Go to this step and do the gesture on the video.`,
+      );
     if (s.gesture !== "self" && !s.element_label.trim())
       problems.push(`${n}: name the thing on screen (e.g. "Sign in").`);
     if (s.gesture === "self" && !s.note_en.trim() && !s.element_label.trim())

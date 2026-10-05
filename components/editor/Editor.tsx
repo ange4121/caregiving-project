@@ -420,6 +420,11 @@ export default function Editor() {
               disabled={!src}
               onClick={() => {
                 const r = addSelfStep(lesson, timeMs);
+                if (r.existed) {
+                  alert(
+                    'There\'s already a step on this frame. To make it "do it yourself", change its type below.',
+                  );
+                }
                 setLesson(r.lesson);
                 setSelected(r.index);
               }}

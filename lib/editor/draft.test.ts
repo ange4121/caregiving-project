@@ -143,6 +143,28 @@ describe("self steps, delete, stepAtTime", () => {
     });
   });
 
+  it("adding a self step on an existing step's moment leaves it alone", () => {
+    const l = markStep(emptyLesson(), 3000, tap).lesson;
+    const r = addSelfStep(l, 3020);
+    expect(r.existed).toBe(true);
+    expect(r.lesson.steps[0]).toMatchObject({ gesture: "tap", x: 0.5 });
+  });
+
+  it("switching to self and back keeps the position", () => {
+    let l = markStep(emptyLesson(), 0, tap).lesson;
+    l = updateStep(l, 0, { gesture: "self" });
+    l = updateStep(l, 0, { gesture: "tap" });
+    expect(l.steps[0]).toMatchObject({ gesture: "tap", x: 0.5, y: 0.5 });
+  });
+
+  it("flags a gesture step with no position", () => {
+    let l = addSelfStep(emptyLesson(), 0).lesson;
+    l = updateStep(l, 0, { gesture: "swipe", element_label: "X" });
+    expect(draftProblems(l)).toContain(
+      "Step 1: show where. Go to this step and do the gesture on the video.",
+    );
+  });
+
   it("delete reindexes", () => {
     let l = markStep(emptyLesson(), 1000, tap).lesson;
     l = markStep(l, 2000, tap).lesson;

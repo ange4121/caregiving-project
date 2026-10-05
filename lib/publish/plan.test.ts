@@ -96,7 +96,7 @@ describe("validateSteps", () => {
       "Step 2: steps must be in time order.",
       "Step 2: swipe needs a direction.",
       "Step 3: time 2000 ms is outside the video.",
-      "Step 3: needs a target position.",
+      "Step 3: no position on screen. In the editor, go to the step and do the gesture on the video.",
     ]);
   });
 });

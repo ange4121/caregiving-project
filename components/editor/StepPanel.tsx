@@ -120,6 +120,13 @@ export default function StepPanel({
             ))}
           </div>
 
+          {step.gesture !== "self" && (step.x === null || step.y === null) && (
+            <p className="rounded-lg bg-amber-100 p-2 text-sm text-amber-900">
+              <b>Where?</b> This step has no spot on the screen yet. Stay on
+              this frame and do the gesture on the video.
+            </p>
+          )}
+
           {step.gesture === "swipe" && (
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex gap-1">

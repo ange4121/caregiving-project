@@ -97,7 +97,9 @@ export function validateSteps(
     if (i > 0 && s.t_ms <= steps[i - 1].t_ms)
       problems.push(`${n}: steps must be in time order.`);
     if (s.gesture !== "self" && (s.x === null || s.y === null))
-      problems.push(`${n}: needs a target position.`);
+      problems.push(
+        `${n}: no position on screen. In the editor, go to the step and do the gesture on the video.`,
+      );
     if (s.gesture === "swipe" && !s.swipe_direction)
       problems.push(`${n}: swipe needs a direction.`);
   });
