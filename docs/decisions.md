@@ -2,6 +2,16 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-04 — Suggested moments + local helper + Publish button
+
+- **Moment finding uses ffmpeg `freezedetect`** (screen still ≥ 0.4 s, then changes), not scene detection: scene scores missed small local changes like the Wi-Fi menu. Each freeze end is a suggested moment; the editor jumps to ~100 ms before the change.
+- On the Control Center recording: 8 moments in ~5 s, including all 3 real steps; the rest are skips (loading finished, closing things).
+- **Touch guess:** diff a small grayscale frame before the change against one ~130 ms after; a small changed area (iOS button highlight) gives a guessed point; a large change (swipe, new screen) gives none. Top 7% ignored (clock, recording pill). On the test recording the guesses landed on the hold and tap targets.
+- **Review flow:** Enter = accept the guess as a tap; do the real gesture to override; S = not a step; Enter in the label field moves to the next pending moment.
+- **Local helper:** the editor uploads the recording to the dev server on the same laptop (system temp folder), which runs ffmpeg for analysis and Publish. Guarded to dev + `localhost` only. The public deployment shows "works on your laptop" instead.
+- **Publish button** writes `public/lessons/<id>/` and links to Try / Send; the author still reviews media and commits/pushes.
+- Moved publish code from `scripts/` into `lib/publish/` so the CLI and the editor share it.
+
 ## 2026-10-02 — Editor, first pass
 
 - **No libraries:** native `<video>` + an SVG overlay with Pointer Events. Konva/Fabric would be extra weight for dots, arrows, and rectangles.

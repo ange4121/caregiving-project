@@ -45,6 +45,8 @@ interface Props {
   }) => void;
   onMark: (fields: GestureFields, tMs: number) => void;
   onSelect: (index: number) => void;
+  /** Suggested touch point (normalized) for the current moment, if any. */
+  guess?: Point | null;
 }
 
 export default function VideoPanel({
@@ -57,6 +59,7 @@ export default function VideoPanel({
   onLoaded,
   onMark,
   onSelect,
+  guess = null,
 }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -270,6 +273,36 @@ export default function VideoPanel({
                 </g>
               );
             })}
+            {guess &&
+              (() => {
+                const g = toScreen(guess, rect);
+                return (
+                  <g>
+                    <circle
+                      cx={g.x}
+                      cy={g.y}
+                      r={22}
+                      fill="rgba(37,99,235,0.25)"
+                      stroke="#2563eb"
+                      strokeWidth={3}
+                      className="animate-[target-pulse_1.2s_ease-in-out_infinite] [transform-box:fill-box] [transform-origin:center]"
+                    />
+                    <circle cx={g.x} cy={g.y} r={5} fill="#2563eb" />
+                    <text
+                      x={g.x + 28}
+                      y={g.y + 5}
+                      fill="#1d4ed8"
+                      fontSize={14}
+                      fontWeight={700}
+                      stroke="white"
+                      strokeWidth={4}
+                      paintOrder="stroke"
+                    >
+                      Enter = tap here
+                    </text>
+                  </g>
+                );
+              })()}
             {press && (
               <>
                 <line

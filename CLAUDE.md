@@ -289,7 +289,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 ## Code map
 
 - `app/l/[id]/page.tsx`: the learner's lesson page; statically built for every folder in `public/lessons/`.
-- `app/editor/page.tsx` + `components/editor/`: the annotation editor (`Editor` state + autosave, `VideoPanel` video/scrub/annotate-by-doing, `StepPanel` step list + details + caption preview). `lib/editor/draft.ts`: pure, tested editing operations.
+- `app/editor/page.tsx` + `components/editor/`: the annotation editor (`Editor` state + autosave + Publish, `VideoPanel` video/scrub/annotate-by-doing, `MomentsPanel` suggested-moments review, `StepPanel` step list + details + caption preview). `lib/editor/draft.ts`: pure, tested editing operations.
 - `app/share/[id]/page.tsx` + `components/share/ShareForm.tsx`: the author's "Send a lesson" page. Builds the parent's link and the message to paste into iMessage/WeChat; remembers the form in this browser's localStorage only.
 - `lib/report.ts`: the end-screen text the parent sends ("我练完了… 第2步试了3次（放手太早）" + English), plus `sms:` / `facetime:` links.
 - `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
@@ -297,7 +297,9 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `components/practice/`: `PracticePlayer` (step flow, hint ladder, feedback text), `PracticeStage` (phone frame, pointer capture, iOS touch blocking), `overlays` (touch replay, ghost finger, hints, hold ring).
 - `lib/lesson/`: manifest types and server-side loading.
 - `locales/`: learner strings (zh-Hans, zh-Hant).
-- `scripts/publish-lesson.ts` + `scripts/publish/plan.ts`: the publish script (runs ffmpeg via `child_process`; `plan.ts` holds the tested time ranges and filter graph). Pixelates everything in one pass to a temp video outside the repo, then cuts stills and clips from it.
+- `lib/publish/`: server-only media pipeline. `publish.ts` (pixelate everything in one pass to a temp video outside the repo, then cut stills and clips), `plan.ts` (tested time ranges + ffmpeg filter graph), `analyze.ts` (find moments with ffmpeg `freezedetect` + guess touch points), `ffmpeg.ts` (spawn helpers). `scripts/publish-lesson.ts` is the command-line wrapper.
+- `app/api/local/{recording,analyze,publish}`: the editor's **local helper**. Dev server only, and only for requests to `localhost` (403 from other devices, 404 in production). Recordings go to the system temp folder (`lib/server/local.ts`), deleted after a day.
+- `lib/editor/moments.ts`: pure moment-finding logic (freeze log parsing, merging, frame-diff touch guess).
 - `lib/captions.ts`: caption templates (EN, zh-Hans, zh-Hant) from gesture + label.
 - `public/lessons/control-center-wifi/`: test lesson (swipe / hold / tap), now produced by the publish script. Its `lesson.json` lives in `fixtures/` (gitignored) next to the recording.
 - `lib/gesture/`: the shared classifier. `classifyGesture` (tap / hold / swipe / wobble), `evaluateAttempt` (step + attempt → ok or one error code), hit testing and coordinate mapping. Thresholds live in `thresholds.ts`.

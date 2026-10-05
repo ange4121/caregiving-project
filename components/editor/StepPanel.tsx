@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { captionsFor } from "@/lib/captions";
 import type { SwipeDirection } from "@/lib/gesture";
 import type { LessonStep } from "@/lib/lesson/types";
@@ -24,6 +25,8 @@ interface Props {
   onSelect: (index: number) => void;
   onChange: (index: number, patch: Partial<LessonStep>) => void;
   onDelete: (index: number) => void;
+  /** Enter in the label field: move on (to the next suggested moment). */
+  onLabelEnter?: () => void;
 }
 
 export default function StepPanel({
@@ -32,8 +35,17 @@ export default function StepPanel({
   onSelect,
   onChange,
   onDelete,
+  onLabelEnter,
 }: Props) {
   const step = selected !== null ? steps[selected] : null;
+  const labelRef = useRef<HTMLInputElement>(null);
+  const needsLabel =
+    step !== null && step.gesture !== "self" && !step.element_label;
+
+  // A freshly marked step needs a name: put the cursor there.
+  useEffect(() => {
+    if (needsLabel) labelRef.current?.focus();
+  }, [selected, needsLabel]);
 
   return (
     <div className="flex flex-col">
@@ -145,7 +157,14 @@ export default function StepPanel({
                 What&apos;s it called on screen?
               </span>
               <input
+                ref={labelRef}
                 value={step.element_label}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && step.element_label.trim()) {
+                    e.currentTarget.blur();
+                    onLabelEnter?.();
+                  }
+                }}
                 onChange={(e) =>
                   onChange(selected, { element_label: e.target.value })
                 }
