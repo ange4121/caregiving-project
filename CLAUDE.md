@@ -104,6 +104,7 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 - Caption template: gesture + element label → `Tap "Sign in"`. Optional short note. English only; the author is not asked to write Chinese.
 - Redaction boxes: a rectangle attached to a step; applies from that step until the next. **Pixelated, not blurred** (blurred text can sometimes be read back). Before export, the author reviews the output with boxes applied, including the clips between steps.
 - **Side-by-side preview** for the selected step: the author's view (English caption) next to the parent's view (the still in the phone frame with the Chinese prompt, exactly as the player renders it). Reuses the player component.
+- **Trim and cut:** "Trim start to here", "Trim end from here", and "Cut a section" (start, then end). Cuts are stored in the lesson (`cuts`), shown as red stripes on the timeline, and skipped during playback; the recording itself is never edited. Publishing drops the cut parts and shortens the clips. A step inside a cut is flagged.
 - Delete a step. No reorder, no undo history.
 - Export `lesson.json`.
 
@@ -215,8 +216,9 @@ All coordinates are **normalized 0–1** relative to the video frame.
 
 - `gesture`: `"tap" | "hold" | "swipe" | "self"`. `self` = "do it yourself" step; `x`, `y`, `target_radius`, and `swipe_direction` are `null`.
 - `target_radius`: fraction of the frame **width**.
+- `cuts` (optional): `[{ "start_ms", "end_ms" }]` in original recording time; parts left out when publishing. `lib/lesson/cuts.ts` holds the time arithmetic.
 - `iphone_model`: the iPhone the lesson was recorded on (optional; shown on library cards with the iOS version, since gestures and screens differ by model).
-- `blur`: redaction boxes. The key keeps the name `blur`, but the publish script pixelates.
+- `blur`: redaction boxes. The key keeps the name `blur`, but the publish script pixelates. A box may carry `from_ms` / `to_ms` (original recording time) to cover something only briefly on screen; otherwise it applies from its step until the next.
 
 `manifest.json` (written by the publish script) adds per-step `still`, `clip`, `caption_en`, `caption_zh_hans`, `caption_zh_hant`.
 
@@ -256,7 +258,7 @@ All coordinates are **normalized 0–1** relative to the video frame.
 
 ## Current priority: make the live site self-explanatory
 
-A first-time visitor must understand the full loop in two minutes without installing anything. **Built Oct 6** (see `docs/decisions.md`), except the walkthrough video (set `HELPER_VIDEO_EMBED` once the Loom exists) and the three demo lessons. In order:
+A first-time visitor must understand the full loop in two minutes without installing anything. **Built Oct 6** (see `docs/decisions.md`), including the Loom walkthrough (`HELPER_VIDEO_EMBED`) and the three demo lessons. In order:
 1. Home page with two entry points: "Try a lesson as the parent" and "See how a helper makes one". On desktop, show the lesson in the phone frame with a QR code to open it on a phone.
 2. A "live prototype" label: lessons are real; authoring currently runs on the author's computer.
 3. Library page: a card per lesson with Practice and Share, and an "Add a lesson" explanation (record, mark steps, publish) with a short screen recording of the editor.
@@ -338,7 +340,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `app/api/local/{recording,analyze,publish}`: the editor's **local helper**. Dev server only, and only for requests to `localhost` (403 from other devices, 404 in production). Recordings go to the system temp folder (`lib/server/local.ts`), deleted after a day.
 - `lib/editor/moments.ts`: pure moment-finding logic (freeze log parsing, merging, frame-diff touch guess).
 - `lib/captions.ts`: caption templates (EN, zh-Hans, zh-Hant) from gesture + label.
-- `public/lessons/`: the public library (`join-wifi`, `chinese-keyboard`, and Text size once made). Each lesson's `lesson.json` lives in `fixtures/` (git-ignored) next to its recording. The early Control Center test lesson was retired on Oct 6.
+- `public/lessons/`: the public library (`join-wifi`, `chinese-keyboard`, `making-text-size-bigger`). Each lesson's `lesson.json` lives in `fixtures/` (git-ignored) next to its recording. The early Control Center test lesson was retired on Oct 6.
 - `lib/gesture/`: the shared classifier. `classifyGesture` (tap / hold / swipe / wobble), `evaluateAttempt` (step + attempt → ok or one error code), hit testing and coordinate mapping. Thresholds live in `thresholds.ts`.
 
 ## Testing priorities

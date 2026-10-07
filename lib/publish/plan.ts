@@ -1,3 +1,4 @@
+import { cutAt, type Cut } from "@/lib/lesson/cuts";
 import type { LessonStep } from "@/lib/lesson/types";
 
 // Pure planning for the publish script: time ranges and the ffmpeg filter
@@ -53,13 +54,15 @@ export function clipRanges(
 const sec = (ms: number) => (ms / 1000).toFixed(3);
 
 /**
- * ffmpeg filter graph: normalize fps and size, then pixelate every box during
- * its step's time range. Output label: [vout].
+ * ffmpeg filter graph: normalize fps and size, pixelate every box during its
+ * step's time range (original recording time), then drop the cut sections.
+ * Output label: [vout].
  */
 export function buildFilterGraph(
   steps: readonly Pick<LessonStep, "t_ms" | "blur">[],
   durationMs: number,
   size: { w: number; h: number },
+  cuts: readonly Cut[] = [],
 ): string {
   const { w: W, h: H } = size;
   const block = Math.max(8, Math.round(W / 45));
@@ -77,12 +80,21 @@ export function buildFilterGraph(
       parts.push(
         `[v${k}]split[a${k}][b${k}]`,
         `[b${k}]crop=${bw}:${bh}:${x}:${y},pixelize=w=${block}:h=${block}[p${k}]`,
-        `[a${k}][p${k}]overlay=${x}:${y}:enable='between(t,${sec(range.startMs)},${sec(range.endMs)})'[v${k + 1}]`,
+        `[a${k}][p${k}]overlay=${x}:${y}:enable='between(t,${sec(b.from_ms ?? range.startMs)},${sec(b.to_ms ?? range.endMs)})'[v${k + 1}]`,
       );
       k++;
     }
   });
-  parts.push(`[v${k}]null[vout]`);
+  if (cuts.length) {
+    // Keep frames outside every cut, then renumber timestamps so the result
+    // plays straight through. (Cut end is exclusive, hence the -1 ms.)
+    const inCut = cuts
+      .map((c) => `between(t,${sec(c.start_ms)},${sec(c.end_ms - 1)})`)
+      .join("+");
+    parts.push(`[v${k}]select='not(${inCut})',setpts=N/(${OUT_FPS}*TB)[vout]`);
+  } else {
+    parts.push(`[v${k}]null[vout]`);
+  }
   return parts.join(";");
 }
 
@@ -90,6 +102,7 @@ export function buildFilterGraph(
 export function validateSteps(
   steps: readonly LessonStep[],
   durationMs: number,
+  cuts: readonly Cut[] = [],
 ): string[] {
   const problems: string[] = [];
   if (steps.length === 0) problems.push("Lesson has no steps.");
@@ -105,6 +118,10 @@ export function validateSteps(
       );
     if (s.gesture === "swipe" && !s.swipe_direction)
       problems.push(`${n}: swipe needs a direction.`);
+    if (cutAt(cuts, s.t_ms))
+      problems.push(
+        `${n}: falls inside a cut section. Move the step or the cut.`,
+      );
   });
   return problems;
 }

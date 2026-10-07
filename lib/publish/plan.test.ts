@@ -100,3 +100,41 @@ describe("validateSteps", () => {
     ]);
   });
 });
+
+describe("cuts", () => {
+  it("drops cut sections after pixelating", () => {
+    const g = buildFilterGraph([step(0)], 10000, { w: 720, h: 1566 }, [
+      { start_ms: 2000, end_ms: 3500 },
+      { start_ms: 8000, end_ms: 10000 },
+    ]);
+    expect(g).toContain(
+      "[v0]select='not(between(t,2.000,3.499)+between(t,8.000,9.999))',setpts=N/(30*TB)[vout]",
+    );
+  });
+
+  it("flags a step that falls inside a cut", () => {
+    expect(
+      validateSteps([step(1000), step(3000)], 10000, [
+        { start_ms: 2500, end_ms: 4000 },
+      ]),
+    ).toEqual([
+      "Step 2: falls inside a cut section. Move the step or the cut.",
+    ]);
+  });
+});
+
+describe("box time windows", () => {
+  it("a box with from/to uses its own window instead of the step's", () => {
+    const g = buildFilterGraph(
+      [
+        step(1000, {
+          blur: [{ x: 0, y: 0, w: 0.5, h: 0.1, from_ms: 1700, to_ms: 3900 }],
+        }),
+        step(3500),
+      ],
+      8000,
+      { w: 720, h: 1566 },
+    );
+    expect(g).toContain("enable='between(t,1.700,3.900)'");
+  });
+});

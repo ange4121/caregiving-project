@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   addBox,
+  addCut,
   addSelfStep,
   copyBoxesToNext,
   removeBox,
+  removeCut,
   deleteStep,
   draftProblems,
   emptyLesson,
@@ -158,6 +160,8 @@ export default function Editor() {
     v.currentTime = ms / 1000;
   };
 
+  const cuts = lesson.cuts ?? [];
+
   const goMoment = (i: number, list = moments) => {
     setCurrentMoment(i);
     setSelected(null);
@@ -173,7 +177,10 @@ export default function Editor() {
     const start = from === null ? 0 : from + 1;
     for (let k = 0; k < moments.length; k++) {
       const i = (start + k) % moments.length;
-      if (momentStatus(moments[i], i, lesson.steps, skippedNow) === "pending") {
+      if (
+        momentStatus(moments[i], i, lesson.steps, skippedNow, cuts) ===
+        "pending"
+      ) {
         goMoment(i);
         return;
       }
@@ -212,6 +219,7 @@ export default function Editor() {
         currentMoment,
         lesson.steps,
         skipped,
+        cuts,
       );
       if (status !== "pending") return;
       if (e.key === "Enter") {
@@ -231,7 +239,7 @@ export default function Editor() {
     cur &&
     cur.guess &&
     Math.abs(timeMs - cur.t_ms) < 60 &&
-    momentStatus(cur, currentMoment!, lesson.steps, skipped) === "pending"
+    momentStatus(cur, currentMoment!, lesson.steps, skipped, cuts) === "pending"
       ? cur.guess
       : null;
 
@@ -280,6 +288,32 @@ export default function Editor() {
     a.download = `${lesson.id || "lesson"}.json`;
     a.click();
     URL.revokeObjectURL(a.href);
+  };
+
+  /** Clear everything for a fresh lesson. The current draft is discarded. */
+  const startOver = () => {
+    const hasWork = lesson.steps.length > 0 || (lesson.cuts ?? []).length > 0;
+    if (
+      hasWork &&
+      !confirm(
+        "Start over? Your current steps, cuts, and boxes will be cleared.",
+      )
+    ) {
+      return;
+    }
+    if (src) URL.revokeObjectURL(src);
+    setSrc(null);
+    setVideoName(null);
+    setLesson(emptyLesson());
+    setIdEdited(false);
+    setSelected(null);
+    setMoments([]);
+    setSkipped([]);
+    setCurrentMoment(null);
+    setToken(null);
+    setHelper("idle");
+    setPublished(null);
+    setMode("steps");
   };
 
   const publish = async () => {
@@ -338,6 +372,12 @@ export default function Editor() {
             }}
           />
         </label>
+        <button
+          onClick={startOver}
+          className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50"
+        >
+          Start over
+        </button>
         <label
           className="cursor-pointer rounded-lg border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50"
           title="Load the matching recording first"
@@ -437,6 +477,8 @@ export default function Editor() {
           onSelect={select}
           guess={mode === "steps" ? guessHere : null}
           localHelper={localHelper}
+          onAddCut={(start, end) => setLesson((l) => addCut(l, start, end))}
+          onRemoveCut={(i) => setLesson((l) => removeCut(l, i))}
           mode={mode}
           onMode={setMode}
           onBox={(i, box) => {
@@ -495,6 +537,7 @@ export default function Editor() {
             moments={moments}
             steps={lesson.steps}
             skipped={skipped}
+            cuts={cuts}
             current={currentMoment}
             onGo={(i) => goMoment(i)}
             onSkip={skipMoment}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { Moment } from "@/lib/editor/moments";
+import { cutAt, type Cut } from "@/lib/lesson/cuts";
 import type { LessonStep } from "@/lib/lesson/types";
 import { fmtTime } from "./VideoPanel";
 
@@ -14,7 +15,10 @@ export function momentStatus(
   i: number,
   steps: readonly LessonStep[],
   skipped: readonly number[],
+  cuts: readonly Cut[] = [],
 ): MomentStatus {
+  // A moment inside a cut section won't be in the lesson.
+  if (cutAt(cuts, m.t_ms)) return "skipped";
   if (steps.some((s) => Math.abs(s.t_ms - m.t_ms) < NEAR_MS)) return "done";
   if (skipped.includes(i)) return "skipped";
   return "pending";
@@ -28,6 +32,7 @@ interface Props {
   moments: Moment[];
   steps: LessonStep[];
   skipped: number[];
+  cuts: Cut[];
   current: number | null;
   onGo: (i: number) => void;
   onSkip: (i: number) => void;
@@ -39,6 +44,7 @@ export default function MomentsPanel({
   moments,
   steps,
   skipped,
+  cuts,
   current,
   onGo,
   onSkip,
@@ -72,7 +78,9 @@ export default function MomentsPanel({
     );
   }
 
-  const statuses = moments.map((m, i) => momentStatus(m, i, steps, skipped));
+  const statuses = moments.map((m, i) =>
+    momentStatus(m, i, steps, skipped, cuts),
+  );
   const reviewed = statuses.filter((s) => s !== "pending").length;
   const cur = current !== null ? moments[current] : null;
   const curStatus = current !== null ? statuses[current] : null;

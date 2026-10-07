@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { captionsFor } from "@/lib/captions";
+import { normalizeCuts, toOutputTime } from "@/lib/lesson/cuts";
 import type { Lesson, Manifest, ManifestStep } from "@/lib/lesson/types";
 import { probe, run, sec } from "./ffmpeg";
 import {
@@ -27,7 +28,14 @@ export async function publishLesson(opts: {
   const log = opts.log ?? (() => {});
   const { lesson, outDir } = opts;
   const src = await probe(opts.video);
-  const problems = validateSteps(lesson.steps, src.durationMs);
+  const cuts = normalizeCuts(lesson.cuts ?? [], src.durationMs);
+  const problems = validateSteps(lesson.steps, src.durationMs, cuts);
+  // Stills and clips are cut from the published (cut) video, so step times
+  // move to output time.
+  const keptMs = toOutputTime(src.durationMs, cuts);
+  const outTimes = lesson.steps.map((s) => ({
+    t_ms: toOutputTime(s.t_ms, cuts),
+  }));
   if (problems.length) {
     throw new Error("Lesson has problems:\n- " + problems.join("\n- "));
   }
@@ -46,7 +54,7 @@ export async function publishLesson(opts: {
       "-i",
       opts.video,
       "-filter_complex",
-      buildFilterGraph(lesson.steps, src.durationMs, size),
+      buildFilterGraph(lesson.steps, src.durationMs, size, cuts),
       "-map",
       "[vout]",
       "-an",
@@ -67,7 +75,7 @@ export async function publishLesson(opts: {
       }
     }
 
-    const clips = clipRanges(lesson.steps, src.durationMs);
+    const clips = clipRanges(outTimes, keptMs);
     const steps: ManifestStep[] = [];
     for (const [i, step] of lesson.steps.entries()) {
       const still = `step-${i}.jpg`;
@@ -77,7 +85,7 @@ export async function publishLesson(opts: {
         "error",
         "-y",
         "-ss",
-        sec(step.t_ms),
+        sec(outTimes[i].t_ms),
         "-i",
         redacted,
         "-frames:v",
@@ -118,10 +126,11 @@ export async function publishLesson(opts: {
 
     const manifest: Manifest = {
       ...lesson,
+      cuts,
       video: {
         width: src.width,
         height: src.height,
-        duration_ms: src.durationMs,
+        duration_ms: keptMs,
       },
       steps,
     };

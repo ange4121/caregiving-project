@@ -6,6 +6,13 @@ export interface RedactBox {
   y: number;
   w: number;
   h: number;
+  /**
+   * Optional time window (original recording ms). Without it, the box applies
+   * from its step until the next step. Use it to cover something that's only
+   * on screen briefly, without pixelating the rest of the step.
+   */
+  from_ms?: number;
+  to_ms?: number;
 }
 
 /** One step as exported by the editor (`lesson.json`). Coordinates are normalized 0–1. */
@@ -25,6 +32,8 @@ export interface LessonStep {
   blur: RedactBox[];
 }
 
+import type { Cut } from "./cuts";
+
 export interface Lesson {
   id: string;
   title_en: string;
@@ -36,6 +45,8 @@ export interface Lesson {
   iphone_model?: string;
   video: { width: number; height: number; duration_ms: number };
   steps: LessonStep[];
+  /** Parts of the recording left out when publishing (original recording time). */
+  cuts?: Cut[];
 }
 
 /** What the publish script writes; the player reads only this. */

@@ -1,0 +1,153 @@
+{
+  "id": "making-text-size-bigger",
+  "title_en": "Making Text Size Bigger",
+  "ios_version": "26",
+  "cuts": [
+    {
+      "start_ms": 15653,
+      "end_ms": 22656
+    }
+  ],
+  "title_zh_hans": "把手机上的字调大",
+  "title_zh_hant": "把手機上的字調大",
+  "iphone_model": "iPhone 17",
+  "video": {
+    "width": 1206,
+    "height": 2622,
+    "duration_ms": 15653
+  },
+  "steps": [
+    {
+      "index": 0,
+      "t_ms": 1567,
+      "gesture": "tap",
+      "x": 0.8611111111111112,
+      "y": 0.13010204081632654,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "Settings",
+      "note_en": "",
+      "blur": [
+        {
+          "x": 0.55,
+          "y": 0.57,
+          "w": 0.28,
+          "h": 0.045,
+          "to_ms": 1900
+        },
+        {
+          "x": 0.06,
+          "y": 0.19,
+          "w": 0.56,
+          "h": 0.1,
+          "from_ms": 1700,
+          "to_ms": 3950
+        },
+        {
+          "x": 0.58,
+          "y": 0.665,
+          "w": 0.33,
+          "h": 0.05,
+          "from_ms": 1700,
+          "to_ms": 3950
+        }
+      ],
+      "still": "step-0.jpg",
+      "clip": "clip-0.mp4",
+      "caption_en": "Tap \"Settings\"",
+      "caption_zh_hans": "点一下 \"Settings\"",
+      "caption_zh_hant": "點一下 \"Settings\""
+    },
+    {
+      "index": 1,
+      "t_ms": 3500,
+      "gesture": "tap",
+      "x": 0.5055555555555555,
+      "y": 0.951530612244898,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "Search",
+      "note_en": "",
+      "blur": [],
+      "still": "step-1.jpg",
+      "clip": "clip-1.mp4",
+      "caption_en": "Tap \"Search\"",
+      "caption_zh_hans": "点一下 \"Search\"",
+      "caption_zh_hant": "點一下 \"Search\""
+    },
+    {
+      "index": 2,
+      "t_ms": 5100,
+      "gesture": "self",
+      "x": 0.5,
+      "y": 0.7295918367346939,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "",
+      "note_en": "Type \"Text\"",
+      "blur": [],
+      "still": "step-2.jpg",
+      "clip": "clip-2.mp4",
+      "caption_en": "Do this yourself: Type \"Text\"",
+      "caption_zh_hans": "自己做这一步：Type \"Text\"",
+      "caption_zh_hant": "自己做這一步：Type \"Text\""
+    },
+    {
+      "index": 3,
+      "t_ms": 7367,
+      "gesture": "tap",
+      "x": 0.30635303426277416,
+      "y": 0.14402151298268975,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "Bold Text",
+      "note_en": "",
+      "blur": [],
+      "still": "step-3.jpg",
+      "clip": "clip-3.mp4",
+      "caption_en": "Tap \"Bold Text\"",
+      "caption_zh_hans": "点一下 \"Bold Text\"",
+      "caption_zh_hant": "點一下 \"Bold Text\""
+    },
+    {
+      "index": 4,
+      "t_ms": 9900,
+      "gesture": "tap",
+      "x": 0.5,
+      "y": 0.4872448979591837,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "Text Size",
+      "note_en": "",
+      "blur": [],
+      "still": "step-4.jpg",
+      "clip": "clip-4.mp4",
+      "caption_en": "Tap \"Text Size\"",
+      "caption_zh_hans": "点一下 \"Text Size\"",
+      "caption_zh_hant": "點一下 \"Text Size\""
+    },
+    {
+      "index": 5,
+      "t_ms": 11484,
+      "gesture": "swipe",
+      "x": 0.47665923047876463,
+      "y": 0.8993061334886817,
+      "swipe_direction": "right",
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "Text Bar",
+      "note_en": "",
+      "blur": [],
+      "still": "step-5.jpg",
+      "clip": "clip-5.mp4",
+      "caption_en": "Swipe right on \"Text Bar\"",
+      "caption_zh_hans": "在 \"Text Bar\" 上往右滑",
+      "caption_zh_hant": "在 \"Text Bar\" 上往右滑"
+    }
+  ]
+}

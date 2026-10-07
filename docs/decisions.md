@@ -2,6 +2,19 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Text size lesson, timed pixelation boxes, Loom on the home page
+
+- **Text size** was made live in the editor on the Loom recording (6 steps, trimmed end). Before publishing publicly it was re-published with pixelation for the city on the home screen and, for ~2 s, the account name and home network shown at the top of Settings.
+- **Pixelation boxes can carry a time window** (`from_ms` / `to_ms`). Covering a whole step would have blocked the home-screen picture to hide a name that appears only as Settings opens. No editor UI for windows yet; set in `lesson.json`.
+- **Loom walkthrough** embedded on the home page (`HELPER_VIDEO_EMBED`).
+- **Editor "Start over"** clears the editor for a fresh lesson (one confirmation; no backup).
+
+## 2026-10-06 — Trim and cut in the editor
+
+- **Cuts are stored, not applied to the recording:** `lesson.cuts = [{start_ms, end_ms}]` in original time. Considered re-encoding a trimmed copy of the recording first, but that would shift every step already marked and needs the laptop helper just to edit. Stored cuts keep marked steps where they are and work on the live site too.
+- **Publishing:** pixelation runs in original time, then ffmpeg `select` drops cut frames and `setpts` renumbers them; step times are mapped to the cut video for stills and clips (`toOutputTime`). Verified on the keyboard recording: 25.2 s → 20.0 s with identical stills.
+- **Editor:** trim start, trim end, and cut a section (start, then end); red stripes on the timeline; playback jumps over cuts; a label when scrubbing inside one; suggested moments inside a cut count as skipped; a step inside a cut blocks Publish.
+
 ## 2026-10-06 — Vault framing, no scam content, iPhone model labels
 
 - **Helper side is a vault, not a gradebook:** the parent's report is a signal for what to resend, not a score. Roadmap reworded (removed "author view of progress" and "check-ins driven by performance").

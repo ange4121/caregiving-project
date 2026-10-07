@@ -14,7 +14,8 @@ export const REPO_URL = "https://github.com/ange4121/caregiving-project";
  * embed link, https://www.loom.com/embed/<id>). Null until it's recorded; the
  * home page then shows the written steps instead of a video.
  */
-export const HELPER_VIDEO_EMBED: string | null = null;
+export const HELPER_VIDEO_EMBED: string | null =
+  "https://www.loom.com/embed/f4cd32655ce34453be50e45867cb5c74";
 
 /** The lesson the home page offers first ("Try a lesson as the parent"). */
 export const FEATURED_LESSON_ID = "join-wifi";

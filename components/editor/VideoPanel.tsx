@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   classifyGesture,
   toScreen,
@@ -15,6 +15,7 @@ import {
   stepAtTime,
   type GestureFields,
 } from "@/lib/editor/draft";
+import { cutAt } from "@/lib/lesson/cuts";
 import type { Lesson, RedactBox } from "@/lib/lesson/types";
 import { LiveHoldRing } from "@/components/practice/overlays";
 
@@ -56,6 +57,9 @@ interface Props {
   onRemoveBox: (stepIndex: number, boxIndex: number) => void;
   /** False on the live site: auto-find and Publish need the helper's laptop. */
   localHelper?: boolean | null;
+  /** Leave `start`–`end` out of the published lesson (ms, any order). */
+  onAddCut: (start: number, end: number) => void;
+  onRemoveCut: (index: number) => void;
 }
 
 export default function VideoPanel({
@@ -74,7 +78,12 @@ export default function VideoPanel({
   onBox,
   onRemoveBox,
   localHelper = null,
+  onAddCut,
+  onRemoveCut,
 }: Props) {
+  const cuts = useMemo(() => lesson.cuts ?? [], [lesson.cuts]);
+  // "Cut from here…" was pressed at this time; waiting for "…to here".
+  const [cutStart, setCutStart] = useState<number | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -118,6 +127,24 @@ export default function VideoPanel({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [videoRef]);
+
+  // While playing, jump over cut sections (or stop at a trimmed end).
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!playing || !v || cuts.length === 0) return;
+    let raf = 0;
+    const tick = () => {
+      // Look a frame or two ahead so the jump happens before the cut shows.
+      const c = cutAt(cuts, v.currentTime * 1000 + 60);
+      if (c) {
+        if (c.end_ms >= duration_ms - 50) v.pause();
+        else v.currentTime = c.end_ms / 1000;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [playing, cuts, duration_ms, videoRef]);
 
   useEffect(() => {
     if (!hint) return;
@@ -426,6 +453,11 @@ export default function VideoPanel({
             )}
           </svg>
         )}
+        {src && cutAt(cuts, timeMs) && (
+          <div className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white">
+            ✂ This part is cut from the lesson
+          </div>
+        )}
         {hint && (
           <div className="pointer-events-none absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-neutral-900 px-4 py-2 text-sm text-white">
             {hint}
@@ -435,6 +467,68 @@ export default function VideoPanel({
 
       {src && (
         <div className="border-t border-neutral-200 bg-white px-4 py-3">
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
+            <span className="text-neutral-500">✂ Cut:</span>
+            <button
+              onClick={() => onAddCut(0, timeMs)}
+              disabled={timeMs <= 0}
+              className="rounded-lg border border-neutral-300 px-2.5 py-1 hover:bg-neutral-50 disabled:opacity-40"
+              title="Leave out everything before this moment"
+            >
+              Trim start to here
+            </button>
+            <button
+              onClick={() => onAddCut(timeMs, duration_ms)}
+              disabled={timeMs >= duration_ms}
+              className="rounded-lg border border-neutral-300 px-2.5 py-1 hover:bg-neutral-50 disabled:opacity-40"
+              title="Leave out everything after this moment"
+            >
+              Trim end from here
+            </button>
+            {cutStart === null ? (
+              <button
+                onClick={() => setCutStart(timeMs)}
+                className="rounded-lg border border-neutral-300 px-2.5 py-1 hover:bg-neutral-50"
+                title="Mark where a section to remove starts, then where it ends"
+              >
+                Cut a section: start here
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    onAddCut(cutStart, timeMs);
+                    setCutStart(null);
+                  }}
+                  disabled={Math.abs(timeMs - cutStart) < 100}
+                  className="rounded-lg bg-red-600 px-2.5 py-1 font-semibold text-white disabled:opacity-40"
+                >
+                  …end cut here (from {fmtTime(cutStart)})
+                </button>
+                <button
+                  onClick={() => setCutStart(null)}
+                  className="text-neutral-500 underline"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+            {cuts.map((c, i) => (
+              <span
+                key={`${c.start_ms}-${c.end_ms}`}
+                className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 font-mono text-xs text-red-800"
+              >
+                {fmtTime(c.start_ms)}–{fmtTime(c.end_ms)}
+                <button
+                  onClick={() => onRemoveCut(i)}
+                  aria-label="Remove cut"
+                  className="font-sans font-bold"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
           <div className="mb-2 flex items-center gap-2 text-sm">
             <div className="flex shrink-0 overflow-hidden whitespace-nowrap rounded-lg border border-neutral-300">
               <button
@@ -487,6 +581,23 @@ export default function VideoPanel({
                 className="w-full"
                 aria-label="Scrub"
               />
+              {duration_ms > 0 &&
+                cuts.map((c) => (
+                  <div
+                    key={`cut-${c.start_ms}`}
+                    className="pointer-events-none absolute top-1/2 h-3 -translate-y-1/2 rounded-sm bg-[repeating-linear-gradient(45deg,#dc2626_0_4px,#fecaca_4px_8px)] opacity-80"
+                    style={{
+                      left: `${(c.start_ms / duration_ms) * 100}%`,
+                      width: `${((c.end_ms - c.start_ms) / duration_ms) * 100}%`,
+                    }}
+                  />
+                ))}
+              {duration_ms > 0 && cutStart !== null && (
+                <div
+                  className="pointer-events-none absolute top-1/2 h-5 w-1 -translate-y-1/2 rounded bg-red-600"
+                  style={{ left: `${(cutStart / duration_ms) * 100}%` }}
+                />
+              )}
               {duration_ms > 0 &&
                 lesson.steps.map((s, i) => (
                   <button

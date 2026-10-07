@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { classifyGesture, type DisplayRect } from "@/lib/gesture";
 import {
   addBox,
+  addCut,
+  removeCut,
   addSelfStep,
   boxFromDrag,
   copyBoxesToNext,
@@ -261,5 +263,33 @@ describe("parseLessonJson", () => {
     expect(
       parseLessonJson('{"steps": [{"t_ms": 1, "gesture": "pinch"}]}'),
     ).toBeNull();
+  });
+});
+
+describe("cuts in the editor", () => {
+  const withVideo = () => ({
+    ...emptyLesson(),
+    video: { width: 1, height: 2, duration_ms: 20000 },
+  });
+
+  it("adds cuts in either order and merges overlaps", () => {
+    let l = addCut(withVideo(), 9000, 6000);
+    l = addCut(l, 8000, 12000);
+    expect(l.cuts).toEqual([{ start_ms: 6000, end_ms: 12000 }]);
+    expect(removeCut(l, 0).cuts).toEqual([]);
+  });
+
+  it("trimming the end runs to the end of the video", () => {
+    expect(addCut(withVideo(), 15000, 99999).cuts).toEqual([
+      { start_ms: 15000, end_ms: 20000 },
+    ]);
+  });
+
+  it("flags a step inside a cut", () => {
+    let l = markStep(withVideo(), 7000, tap).lesson;
+    l = addCut(l, 6000, 8000);
+    expect(draftProblems(l)).toContain(
+      "Step 1: falls inside a cut section. Move the step or the cut.",
+    );
   });
 });

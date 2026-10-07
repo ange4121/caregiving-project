@@ -1,5 +1,6 @@
 import type { Classification, DisplayRect } from "@/lib/gesture";
 import { toNormalized } from "@/lib/gesture";
+import { cutAt, normalizeCuts } from "@/lib/lesson/cuts";
 import type { Lesson, LessonStep, RedactBox } from "@/lib/lesson/types";
 
 // Pure editing operations on a lesson draft. The editor UI calls these; they
@@ -233,6 +234,25 @@ export function copyBoxesToNext(lesson: Lesson, index: number): Lesson {
   };
 }
 
+/** Leave out `start`–`end` (any order) when publishing; merges with overlapping cuts. */
+export function addCut(lesson: Lesson, start: number, end: number): Lesson {
+  const duration = lesson.video.duration_ms || Math.max(start, end);
+  return {
+    ...lesson,
+    cuts: normalizeCuts(
+      [...(lesson.cuts ?? []), { start_ms: start, end_ms: end }],
+      duration,
+    ),
+  };
+}
+
+export function removeCut(lesson: Lesson, index: number): Lesson {
+  return {
+    ...lesson,
+    cuts: (lesson.cuts ?? []).filter((_, i) => i !== index),
+  };
+}
+
 /** The step whose time range (its time → next step's time) contains `t_ms`, if any. */
 export function stepAtTime(lesson: Lesson, t_ms: number): number | null {
   let found: number | null = null;
@@ -253,6 +273,10 @@ export function draftProblems(lesson: Lesson): string[] {
     if (s.gesture !== "self" && (s.x === null || s.y === null))
       problems.push(
         `${n}: show where. Go to this step and do the gesture on the video.`,
+      );
+    if (cutAt(lesson.cuts ?? [], s.t_ms))
+      problems.push(
+        `${n}: falls inside a cut section. Move the step or the cut.`,
       );
     if (s.gesture !== "self" && !s.element_label.trim())
       problems.push(`${n}: name the thing on screen (e.g. "Sign in").`);

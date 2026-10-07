@@ -36,7 +36,7 @@ npm run build
 
 1. Screen-record the task on your iPhone and copy the video to your laptop (keep recordings in `fixtures/`, which git ignores).
 2. Run `npm run dev` and open the editor at **`http://localhost:<port>/editor`** in Chrome or Safari. It must be `localhost`: the editor's local helper refuses requests from other addresses.
-3. Load the recording. Review the suggested moments (Enter = accept the suggested tap, S = not a step, or do the real gesture on the video), name each step, and switch to **Pixelate** to cover anything private.
+3. Load the recording. Use **✂ Trim start / Trim end / Cut a section** to leave out waiting, loading, or mistakes (the recording itself isn't changed). Review the suggested moments (Enter = accept the suggested tap, S = not a step, or do the real gesture on the video), name each step, and switch to **Pixelate** to cover anything private.
 4. Click **Publish**. Files land in `public/lessons/<id>/`.
 5. **Check every picture and clip for anything private.** Everything in `public/lessons/` becomes public when you push. Keep family-only lessons out of the repo (`private-lessons/` is git-ignored).
 6. Commit and push; Vercel redeploys. Send it from `/share/<id>`.
