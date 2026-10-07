@@ -11,11 +11,13 @@ import {
   draftProblems,
   emptyLesson,
   markStep,
+  parseLessonJson,
   slugify,
   updateStep,
 } from "@/lib/editor/draft";
 import type { Moment } from "@/lib/editor/moments";
 import type { Lesson } from "@/lib/lesson/types";
+import PrototypeBanner from "@/components/site/PrototypeBanner";
 import MomentsPanel, { momentStatus, type HelperState } from "./MomentsPanel";
 import StepPanel from "./StepPanel";
 import VideoPanel, { fmtTime } from "./VideoPanel";
@@ -43,6 +45,8 @@ export default function Editor() {
   // Local helper (ffmpeg on this laptop): token for the uploaded recording.
   const [token, setToken] = useState<string | null>(null);
   const [helper, setHelper] = useState<HelperState>("idle");
+  // Is the local helper (ffmpeg on this laptop) reachable? null = still checking.
+  const [localHelper, setLocalHelper] = useState<boolean | null>(null);
   const [moments, setMoments] = useState<Moment[]>([]);
   const [skipped, setSkipped] = useState<number[]>([]);
   const [currentMoment, setCurrentMoment] = useState<number | null>(null);
@@ -51,6 +55,12 @@ export default function Editor() {
   const [published, setPublished] = useState<
     { ok: true; id: string } | { ok: false; error: string } | null
   >(null);
+
+  useEffect(() => {
+    fetch("/api/local/recording")
+      .then((r) => setLocalHelper(r.ok))
+      .catch(() => setLocalHelper(false));
+  }, []);
 
   // Restore the draft once, on the client.
   useEffect(() => {
@@ -237,6 +247,30 @@ export default function Editor() {
       id: idEdited ? l.id : slugify(title_en),
     }));
 
+  /** Load a lesson.json draft (load the matching recording first). */
+  const openDraft = async (file: File) => {
+    const draft = parseLessonJson(await file.text());
+    if (!draft) {
+      alert("That file isn't a lesson.json.");
+      return;
+    }
+    if (
+      lesson.steps.length > 0 &&
+      !confirm(
+        `Replace your current ${lesson.steps.length} steps with this draft?`,
+      )
+    ) {
+      return;
+    }
+    // Keep the loaded video's real size and length.
+    setLesson({
+      ...draft,
+      video: lesson.video.width ? lesson.video : draft.video,
+    });
+    setIdEdited(true);
+    setSelected(null);
+  };
+
   const download = () => {
     const blob = new Blob([JSON.stringify(lesson, null, 2) + "\n"], {
       type: "application/json",
@@ -276,12 +310,15 @@ export default function Editor() {
     : helper === "uploading" || helper === "analyzing"
       ? "Getting the recording ready…"
       : !token
-        ? "Publishing only works on your laptop, at http://localhost."
+        ? localHelper === false
+          ? "Publish runs on the helper's laptop (not on the live site)."
+          : "Publishing only works on your laptop, at http://localhost."
         : (problems[0] ?? null);
   const needsVideo = !src && lesson.steps.length > 0 && videoName;
 
   return (
     <div className="flex h-dvh flex-col bg-white text-neutral-900">
+      {localHelper === false && <PrototypeBanner tone="amber" />}
       <header className="flex flex-wrap items-center gap-3 border-b border-neutral-200 px-4 py-3">
         <Link href="/" className="font-semibold">
           Phone lessons
@@ -297,6 +334,22 @@ export default function Editor() {
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) loadFile(f);
+              e.target.value = "";
+            }}
+          />
+        </label>
+        <label
+          className="cursor-pointer rounded-lg border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50"
+          title="Load the matching recording first"
+        >
+          Open draft
+          <input
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void openDraft(f);
               e.target.value = "";
             }}
           />
@@ -383,6 +436,7 @@ export default function Editor() {
           }}
           onSelect={select}
           guess={mode === "steps" ? guessHere : null}
+          localHelper={localHelper}
           mode={mode}
           onMode={setMode}
           onBox={(i, box) => {
@@ -410,6 +464,17 @@ export default function Editor() {
                     setLesson((l) => ({ ...l, id: slugify(e.target.value) }));
                   }}
                   className="h-8 min-w-0 flex-1 rounded border border-neutral-300 px-2 font-mono text-xs"
+                />
+              </label>
+              <label className="flex items-center gap-1">
+                <span className="text-neutral-500">iPhone</span>
+                <input
+                  value={lesson.iphone_model ?? ""}
+                  onChange={(e) =>
+                    setLesson((l) => ({ ...l, iphone_model: e.target.value }))
+                  }
+                  placeholder="16 Pro"
+                  className="h-8 w-20 rounded border border-neutral-300 px-2"
                 />
               </label>
               <label className="flex items-center gap-1">

@@ -1,0 +1,68 @@
+import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, it } from "vitest";
+import type { LessonCard } from "@/lib/home";
+import HomeView from "./HomeView";
+
+const card = (id: string, titleEn: string): LessonCard => ({
+  id,
+  titleEn,
+  titleZh: null,
+  steps: 3,
+  iosVersion: "26",
+  recordedOn: "iPhone 16 Pro · iOS 26",
+  thumb: `/lessons/${id}/step-0.jpg`,
+  practiceHref: `/l/${id}?demo=1`,
+  shareHref: `/share/${id}`,
+});
+
+const render = (cards: LessonCard[], video: string | null = null) =>
+  renderToStaticMarkup(<HomeView cards={cards} helperVideoEmbed={video} />);
+
+describe("HomeView", () => {
+  const html = render([
+    card("wifi", "Get onto Wi-Fi"),
+    card("kb", "Chinese keyboard"),
+  ]);
+
+  it("labels the site as a live prototype and says what runs locally", () => {
+    expect(html).toContain("Live prototype.");
+    expect(html).toContain("runs on the helper");
+  });
+
+  it("offers both ways in", () => {
+    expect(html).toContain("Try a lesson as the parent");
+    expect(html).toContain("See how a helper makes one");
+    expect(html).toContain('href="/editor"');
+  });
+
+  it("the main button opens the featured lesson in demo mode", () => {
+    expect(html).toContain("Try it →");
+    expect(html.indexOf('href="/l/wifi?demo=1"')).toBeLessThan(
+      html.indexOf('href="/l/kb?demo=1"'),
+    );
+  });
+
+  it("labels each lesson with the phone it was recorded on", () => {
+    expect(html).toContain("recorded on iPhone 16 Pro · iOS 26");
+  });
+
+  it("lists every lesson with Practice and Share", () => {
+    for (const id of ["wifi", "kb"]) {
+      expect(html).toContain(`href="/l/${id}?demo=1"`);
+      expect(html).toContain(`href="/share/${id}"`);
+    }
+  });
+
+  it("shows the walkthrough video only once there is one", () => {
+    expect(html).not.toContain("<iframe");
+    const withVideo = render(
+      [card("wifi", "Wi-Fi")],
+      "https://www.loom.com/embed/abc",
+    );
+    expect(withVideo).toContain('src="https://www.loom.com/embed/abc"');
+  });
+
+  it("still renders with no lessons", () => {
+    expect(render([])).toContain("See how a helper makes one");
+  });
+});

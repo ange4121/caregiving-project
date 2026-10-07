@@ -16,6 +16,19 @@ A tool that lets an adult child turn an iPhone screen recording into a short pho
 
 The editor is how lessons get made. Practice is what's new. The family is what lasts.
 
+### Product thesis (updated Oct 2026)
+- This is a **toolkit for the helper** (an adult child helping an aging immigrant parent), not a digital literacy curriculum.
+- **Core loop:** helper records their screen → editor finds steps → publish → parent practices on their own phone with feedback → parent reports back or calls.
+- **Just in time:** lessons are made for the exact task a parent is stuck on, and resent when they need the reminder.
+
+### Two kinds of lessons: a public library and a private vault
+- **Public library:** anything generalizable the author makes is open to everyone, like the learning articles a password manager publishes for its users. Everyday, non-sensitive tasks (Wi-Fi, text size, keyboards). Made and checked by the author only.
+- **Private vault:** a helper's own lessons, private to them. Either account-specific (bank, health portal) or specific to how their parent's phone works (model, iOS version, settings). Never public.
+- Any helper can send a public lesson to their own parent through the share page, without making anything. Each library card needs a Share action for this.
+- Each public lesson is labelled with the iPhone model and iOS version it was recorded on.
+- Intended path for a new helper: share from the public library first, then use the editor for private, account-specific tasks.
+- Both are "here's how to explain this thing", picked from and sent as a link at the moment the parent needs it.
+
 ## Landscape (why this doesn't exist yet)
 
 Full research, reasoning, and sources: `docs/market-research.md`. Summary:
@@ -33,10 +46,16 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 - **Author (adult child).** Records on their iPhone, edits on a laptop. English-first. Controls everything that gets sent.
 - **Learner (parent).** iPhone. Reads Chinese (Simplified or Traditional). Their apps may be in English. No account, no app install. Opens links from iMessage, WeChat, or WhatsApp.
 
+## Constraints
+- Parents use iPhones; lessons must work in Safari and WeChat, no app.
+- Gestures differ by iPhone model and iOS version; a lesson must match the parent's phone.
+- Raw recordings and personal details never enter the repo.
+- Never present an unbuilt feature as working. Label anything that only works locally.
+
 ## Product principles (these break ties)
 
 1. **The child is in control.** The app never messages the parent. It prepares text and links; the child sends them.
-2. **The parent never sees a catalog.** One link = one task.
+2. **The parent never sees a catalog.** One link = one task. (The library is the helper's catalog, not the parent's.)
 3. **Practice, not watching.** Every lesson can be practiced, not just viewed.
 4. **Feedback names the specific error.**
 5. **Manual first, AI optional.** Every core flow works with zero AI.
@@ -98,12 +117,14 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 
 **5. Chinese captions**
 - Template = fixed Chinese verb + the on-screen English label verbatim: `点一下 "Sign in"`. **No Chinese gloss of the label in the MVP** (English first); AI-generated glosses come later (see Nice to have).
-- Language switch in the player: EN / 简 / 繁, also settable with `?lang=en|zh-Hans|zh-Hant`. **Default is English while Shuxin tests (`DEFAULT_LANG` in `lib/i18n.ts`); switch it to `zh-Hans` before any lesson goes to a parent.**
+- Language switch in the player: EN / 简 / 繁, also settable with `?lang=en|zh-Hans|zh-Hant`. **The site default stays English** (`DEFAULT_LANG` in `lib/i18n.ts`) so visitors and reviewers can follow the demo. Lessons a helper sends from the share page open in the parent's Chinese via `#lang=` in the link.
 
-**6. Demo lessons (made with the editor)**
-- One app lesson: Chase login (confirmed Oct 2: Chase can be screen-recorded), pixelated.
-- One or two iPhone basics (e.g., Wi-Fi from Control Center; switching to the Chinese keyboard).
-- Each tagged with the iOS version it was recorded on.
+**6. Demo lessons for the live site (made with the editor)**
+1. Getting onto Wi-Fi
+2. Making the text on your phone bigger
+3. Switching to the Chinese keyboard
+
+All three are open-library lessons with nothing private on screen. Each labelled with the iPhone model and iOS version it was recorded on. Account-specific lessons (e.g., a bank login) are private: they never go on the live site.
 
 **7. Share text**
 - After publish, a copy button for a bilingual message + link, e.g. "妈，我给你做了一个小练习：怎么登录 Chase。有空的时候点开试试。[link]"
@@ -112,13 +133,12 @@ Full research, reasoning, and sources: `docs/market-research.md`. Summary:
 1. Fuller attempt detail in the report-back message (hints used, press durations per step).
 2. AI translation via the Anthropic API (server-only route): Chinese glosses for element labels (`点一下 "Sign in"（登录）`) and free-text notes. The author reviews before publishing.
 3. "我的屏幕不一样" (my screen looks different) button.
-4. Concept cards linked from steps, pointing to Apple's official Chinese support pages. (e.g., "what is Control Center?")
-4b. Just-in-time gesture intro: the first time a lesson asks for a swipe (or tap/hold), a short "this is a swipe: press, slide, lift" demo with a quick try, attached to that step. Not a course up front (principle 6); not a standalone sandbox (non-goal). Raised by Shuxin after testing, Oct 2.
+4. Just-in-time gesture intro: the first time a lesson asks for a swipe (or tap/hold), a short "this is a swipe: press, slide, lift" demo with a quick try, attached to that step. Not a course up front (principle 6); not a standalone sandbox (non-goal). Raised by Shuxin after testing, Oct 2.
 5. "Jump to next screen change" (ffmpeg scene detection script → JSON the editor reads).
 
 ### Explicit non-goals for the MVP
 - Standalone gesture sandbox (Apple Tips and Be Connected cover basics; our gesture feedback lives inside practice mode).
-- Judgment lessons (scams, permission prompts). Roadmap only.
+- Scam or judgment lessons of any kind. The general lessons are everyday tasks: joining Wi-Fi, text size, keyboards.
 - Database, accounts, tokenized per-parent links, expiry/revoke.
 - Checking drag, scroll, type, or pinch gestures (typing is covered by "do it yourself" steps).
 - AI step suggestion. Reminders, collections, dashboards.
@@ -174,6 +194,7 @@ All coordinates are **normalized 0–1** relative to the video frame.
   "id": "chase-login",
   "title_en": "Log in to Chase",
   "ios_version": "26.0",
+  "iphone_model": "iPhone 16 Pro",
   "video": { "width": 1170, "height": 2532, "duration_ms": 94000 },
   "steps": [
     {
@@ -194,6 +215,7 @@ All coordinates are **normalized 0–1** relative to the video frame.
 
 - `gesture`: `"tap" | "hold" | "swipe" | "self"`. `self` = "do it yourself" step; `x`, `y`, `target_radius`, and `swipe_direction` are `null`.
 - `target_radius`: fraction of the frame **width**.
+- `iphone_model`: the iPhone the lesson was recorded on (optional; shown on library cards with the iOS version, since gestures and screens differ by model).
 - `blur`: redaction boxes. The key keeps the name `blur`, but the publish script pixelates.
 
 `manifest.json` (written by the publish script) adds per-step `still`, `clip`, `caption_en`, `caption_zh_hans`, `caption_zh_hant`.
@@ -232,6 +254,16 @@ All coordinates are **normalized 0–1** relative to the video frame.
 - Learner strings in `/locales/zh-Hans.json` and `/locales/zh-Hant.json`; author strings in `/locales/en.json`.
 - Never show error codes to the learner; show a calm message and the help button.
 
+## Current priority: make the live site self-explanatory
+
+A first-time visitor must understand the full loop in two minutes without installing anything. **Built Oct 6** (see `docs/decisions.md`), except the walkthrough video (set `HELPER_VIDEO_EMBED` once the Loom exists) and the three demo lessons. In order:
+1. Home page with two entry points: "Try a lesson as the parent" and "See how a helper makes one". On desktop, show the lesson in the phone frame with a QR code to open it on a phone.
+2. A "live prototype" label: lessons are real; authoring currently runs on the author's computer.
+3. Library page: a card per lesson with Practice and Share, and an "Add a lesson" explanation (record, mark steps, publish) with a short screen recording of the editor.
+4. Share preview: show the message as the parent receives it.
+
+Parent share links open in Chinese; the home page demo opens in English.
+
 ## Build plan
 
 Sequencing only, no day counts. Build the essence first (practice + feedback + the family loop), then the tools that make lessons cheap to produce. Each stage should leave something demoable.
@@ -257,13 +289,13 @@ Sequencing only, no day counts. Build the essence first (practice + feedback + t
 
 ### 4. Publish script
 - `publish-lesson`: pixelate, stills, clips (H.264, phone-sized), captions, manifest.
-- Works from a hand-written `lesson.json`, so real lessons (Chase login) can be published before the editor exists.
+- Works from a hand-written `lesson.json`, so real lessons can be published before the editor exists.
 
 ### 5. Annotation editor
 - Load local video, scrub, pause; annotate by doing; system-gesture checkbox; "do it yourself" steps; labels and captions; redaction boxes; delete; export `lesson.json`.
 
 ### 6. Demo lessons + testing
-- Chase login and 1–2 iPhone basics, made with the editor; tag iOS version.
+- The three open-library demo lessons (Wi-Fi, bigger text, Chinese keyboard), made with the editor; tag iOS version.
 - Test with yourself, your parents if available, and friends. Send via iMessage and WeChat.
 - Note: completed without a call? which step and which error? how long did it take to make the lesson? did they then do it in the real app?
 
@@ -294,7 +326,11 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `app/share/[id]/page.tsx` + `components/share/ShareForm.tsx`: the author's "Send a lesson" page. Builds the parent's link and the message to paste into iMessage/WeChat; remembers the form in this browser's localStorage only.
 - `lib/report.ts`: the end-screen text the parent sends ("我练完了… 第2步试了3次（放手太早）" + English), plus `sms:` / `facetime:` links.
 - `lib/share.ts`: link fragment (`#lang=…&to=…&me=…`), contact checks, message templates (zh-Hans, zh-Hant, plus English for the author).
-- `app/page.tsx`: lesson list with Try / Send.
+- `app/page.tsx` + `components/site/HomeView.tsx`: the public home page (what it is, the three-step loop, "Try a lesson as the parent" / "See how a helper makes one", lesson cards). `lib/home.ts` builds the cards. `components/site/PrototypeBanner.tsx`: the "live prototype" label.
+- `lib/site.ts`: site settings: `SITE_URL` (link previews), `REPO_URL`, `HELPER_VIDEO_EMBED` (the Loom walkthrough; null until recorded), `FEATURED_LESSON_ID`.
+- `lib/lesson/url.ts`: reads a lesson link (`?lang=`, `?demo=1`, `#lang=&to=&me=`). Demo mode = opened from the home page; end-screen buttons explain instead of acting. `lib/lesson/meta.ts`: link-preview title/image for a lesson.
+- `components/practice/LessonFrame.tsx`: on laptops, the lesson at phone width plus a visitor side panel with a QR code (hidden on phones and real share links).
+- `components/share/ParentPhonePreview.tsx`: the share message as it lands on the parent's phone.
 - `components/practice/`: `PracticePlayer` (start screen → Watch or Practice), `PracticeMode` (step flow, hint ladder incl. "看一遍" clip replay, clips after correct steps, end screen), `WatchMode` (ghost finger demonstrates each step, then its clip; learner taps Next), `PracticeStage` (phone frame, pointer capture, iOS touch blocking, clip playback over the still), `overlays` (touch replay, ghost finger, hints, hold ring), `lesson.tsx` (shared shell, header, URL/share context).
 - `lib/lesson/`: manifest types and server-side loading.
 - `locales/`: learner strings (zh-Hans, zh-Hant).
@@ -302,7 +338,7 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - `app/api/local/{recording,analyze,publish}`: the editor's **local helper**. Dev server only, and only for requests to `localhost` (403 from other devices, 404 in production). Recordings go to the system temp folder (`lib/server/local.ts`), deleted after a day.
 - `lib/editor/moments.ts`: pure moment-finding logic (freeze log parsing, merging, frame-diff touch guess).
 - `lib/captions.ts`: caption templates (EN, zh-Hans, zh-Hant) from gesture + label.
-- `public/lessons/control-center-wifi/`: test lesson (swipe / hold / tap), now produced by the publish script. Its `lesson.json` lives in `fixtures/` (gitignored) next to the recording.
+- `public/lessons/`: the public library (`join-wifi`, `chinese-keyboard`, and Text size once made). Each lesson's `lesson.json` lives in `fixtures/` (git-ignored) next to its recording. The early Control Center test lesson was retired on Oct 6.
 - `lib/gesture/`: the shared classifier. `classifyGesture` (tap / hold / swipe / wobble), `evaluateAttempt` (step + attempt → ok or one error code), hit testing and coordinate mapping. Thresholds live in `thresholds.ts`.
 
 ## Testing priorities
@@ -311,16 +347,35 @@ npm run publish-lesson -- --video <path> --lesson <lesson.json> --out public/les
 - Real iPhone: practice mode in Safari and WeChat.
 - Never commit fixtures, unredacted video, or unredacted stills.
 
+## On-thesis, later
+- Parent-side "what is this screen asking me?" (screenshot → plain Chinese explanation → forward to helper).
+- Turning a live help session into a lesson.
+
+## Helper-side organization: a vault, not a gradebook
+- Model: a password manager for know-how. The helper keeps a private set of lessons and sends the right one, as a link, at the moment the parent needs it.
+- The end-of-lesson report is a signal for what to resend, not a score.
+- Later: private lesson links that can expire.
+
+## Concept cards
+- Plain-language cards for stuck moments, titled by the moment, not the term ("It's asking for a code", not "What is 2FA").
+- Format: one picture of the real screen, what it means in two sentences, what to do, and any safety rule.
+- Cards link from the lesson step where the moment occurs.
+- Not yet built. Do not build until asked.
+
+## Off-thesis (do not build unless asked)
+- Scam or judgment lessons of any kind.
+- WeChat video export.
+- Accounts.
+- In-browser publishing.
+
 ## Post-MVP roadmap (do not build yet)
 
-- **Family loop:** tokenized per-parent links with expiry/revoke; attempt events stored server-side; author view of progress; reminders to the author (the child sends; the app never messages the parent); spaced check-ins driven by performance; practice without hints.
+- **Family loop:** the parent's end-of-lesson report as a signal for what to resend (not a score); private lesson links that can expire; reminders to the author (the child sends; the app never messages the parent); practice without hints.
 - **Library:** open library of iPhone basics (getting unstuck, Control Center, Settings, keyboards, screen recording), tagged by iOS version; assignable by the child; ordered path on the author side only.
 - **Reverse direction:** native iOS broadcast extension for one-tap "record and send to my child"; author annotates the parent's own recording.
-- **Judgment lessons:** scam texts, permission prompts, pop-ups, using the same player with choice buttons.
-- **Concept cards and an icon glossary** in Chinese.
 - **Class mode** for libraries and senior centers: a volunteer runs a session where each senior practices the same lessons on their own phone and the volunteer sees who's stuck.
 - **Read-aloud** of captions and feedback (Mandarin, Cantonese) for parents who don't read comfortably.
-- More gestures; storage via Supabase or in-browser processing via ffmpeg.wasm.
+- More gestures.
 
 ## How to work with Shuxin
 

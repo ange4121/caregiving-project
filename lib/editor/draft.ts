@@ -261,3 +261,41 @@ export function draftProblems(lesson: Lesson): string[] {
   });
   return problems;
 }
+
+/**
+ * Read a lesson.json (e.g. a draft made elsewhere) back into the editor.
+ * Returns null if it isn't a lesson. Steps are re-sorted and re-indexed.
+ */
+export function parseLessonJson(text: string): Lesson | null {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  const l = data as Partial<Lesson>;
+  if (!l || typeof l !== "object" || !Array.isArray(l.steps)) return null;
+  const okStep = (s: Partial<LessonStep>) =>
+    typeof s.t_ms === "number" &&
+    ["tap", "hold", "swipe", "self"].includes(s.gesture as string);
+  if (!l.steps.every(okStep)) return null;
+  const base = emptyLesson();
+  return {
+    ...base,
+    ...l,
+    video: { ...base.video, ...(l.video ?? {}) },
+    steps: reindex(
+      l.steps.map((s) => ({
+        x: null,
+        y: null,
+        swipe_direction: null,
+        system_gesture: false,
+        target_radius: null,
+        element_label: "",
+        note_en: "",
+        blur: [],
+        ...(s as Partial<LessonStep>),
+      })) as LessonStep[],
+    ),
+  };
+}

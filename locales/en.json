@@ -20,6 +20,10 @@
   "next": "Next →",
   "practice_now": "✋ Now practice yourself",
   "watching": "Watching",
+  "demo_badge": "Demo",
+  "demo_got_it_note": "In a real link from a helper, this opens Messages with this text ready to send to them:",
+  "demo_help_note": "In a real link from a helper, this starts a FaceTime call to them.",
+  "demo_close": "Got it",
   "errors": {
     "tap_too_long": "You pressed too long. Like a doorbell: touch it and let go.",
     "tap_moved": "Your finger moved a little. Relax: touch, then lift straight up.",

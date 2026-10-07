@@ -20,6 +20,10 @@
   "next": "下一步 →",
   "practice_now": "✋ 现在自己练习",
   "watching": "看一遍",
+  "demo_badge": "示范",
+  "demo_got_it_note": "在真实的链接里，这个按钮会打开短信，把下面这段话发给孩子：",
+  "demo_help_note": "在真实的链接里，这个按钮会用 FaceTime 打给孩子。",
+  "demo_close": "知道了",
   "errors": {
     "tap_too_long": "你按得太久了，像按门铃一样，碰一下就放开",
     "tap_moved": "手指动了一点，放轻松，点下去就抬起来",

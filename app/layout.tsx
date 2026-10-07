@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,6 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Makes relative link-preview images absolute (iMessage / WeChat need full URLs).
+  metadataBase: new URL(SITE_URL),
   title: "Phone lessons",
   description: "Practice phone tasks, made by your family.",
 };

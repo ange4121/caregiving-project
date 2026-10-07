@@ -11,6 +11,7 @@ import {
   emptyLesson,
   gestureFromClassification,
   markStep,
+  parseLessonJson,
   slugify,
   stepAtTime,
   updateStep,
@@ -225,5 +226,40 @@ describe("redaction boxes", () => {
     l = removeBox(l, 0, 0);
     expect(l.steps[0].blur).toEqual([]);
     expect(copyBoxesToNext(l, 1)).toBe(l); // last step: nothing to copy to
+  });
+});
+
+describe("parseLessonJson", () => {
+  it("reads a draft back, sorting steps and filling missing fields", () => {
+    const l = parseLessonJson(
+      JSON.stringify({
+        id: "join-wifi",
+        title_en: "Get onto Wi-Fi",
+        steps: [
+          {
+            t_ms: 5000,
+            gesture: "tap",
+            x: 0.5,
+            y: 0.5,
+            element_label: "Wi-Fi",
+          },
+          { t_ms: 1000, gesture: "self", note_en: "Type your password" },
+        ],
+      }),
+    );
+    expect(l?.id).toBe("join-wifi");
+    expect(l?.steps.map((s) => [s.index, s.gesture])).toEqual([
+      [0, "self"],
+      [1, "tap"],
+    ]);
+    expect(l?.steps[1].blur).toEqual([]);
+  });
+
+  it("rejects things that aren't lessons", () => {
+    expect(parseLessonJson("not json")).toBeNull();
+    expect(parseLessonJson('{"steps": "nope"}')).toBeNull();
+    expect(
+      parseLessonJson('{"steps": [{"t_ms": 1, "gesture": "pinch"}]}'),
+    ).toBeNull();
   });
 });

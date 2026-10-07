@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ShareForm from "@/components/share/ShareForm";
+import PrototypeBanner from "@/components/site/PrototypeBanner";
 import { listLessonIds, loadManifest } from "@/lib/lesson/load";
 
 export const dynamicParams = false;
@@ -23,6 +24,7 @@ export default async function SharePage({ params }: PageProps<"/share/[id]">) {
   if (!manifest) notFound();
   return (
     <div className="min-h-dvh bg-white">
+      <PrototypeBanner />
       <ShareForm
         manifest={manifest}
         stillSrc={`/lessons/${id}/${manifest.steps[0].still}`}

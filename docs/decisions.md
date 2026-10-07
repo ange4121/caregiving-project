@@ -2,6 +2,43 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Vault framing, no scam content, iPhone model labels
+
+- **Helper side is a vault, not a gradebook:** the parent's report is a signal for what to resend, not a score. Roadmap reworded (removed "author view of progress" and "check-ins driven by performance").
+- **No scam or judgment content of any kind.** The general lessons are everyday tasks (joining Wi-Fi, text size, keyboards).
+- **Public library vs private vault:** anything generalizable the author makes is public, like a password manager's learning articles for its users; a helper's own lessons (account-specific, or specific to how their parent's phone works) stay in their private vault.
+- **Lessons record the iPhone model** (`iphone_model`, optional) alongside the iOS version; library cards and the share page say "recorded on iPhone … · iOS …", because screens and gestures differ by model. The editor has an iPhone field next to iOS.
+
+## 2026-10-06 — Demo lessons drafted; editor can open a draft
+
+- **Text size** (22.7 s, the shortest recording) is kept for the live editor walkthrough in the Loom. **Get onto Wi-Fi** (7 steps) and **Switch to the Chinese keyboard** (4 steps) were drafted from the recordings (auto-found moments + frame-by-frame checks) and published locally for review. Drafts live in `fixtures/<id>.lesson.json` (git-ignored).
+- **Privacy in the Wi-Fi recording:** the Apple account name flashes for ~0.3 s as Settings opens; network names appear in lists, the selected row, and the "Join" sheet title as it slides in and out. Boxes cover the whole range of the affected steps (boxes can't yet be limited to part of a step), checked frame by frame at 15–30 fps. The keyboard recording's private Notes titles appear before step 1, so no still or clip includes them.
+- **Editor "Open draft":** loads a `lesson.json` into the editor (after loading the matching recording) so a drafted lesson can be reviewed, adjusted, and re-published. `parseLessonJson` in `lib/editor/draft.ts`, tested.
+
+## 2026-10-06 — Make the live site self-explanatory
+
+Goal: a stranger understands the whole loop in two minutes without installing anything. Built in this order:
+
+1. **"Live prototype" label** on the home, share, and (live-site) editor pages: lessons are real; making a lesson runs on the helper's laptop. The editor asks the server once whether the local helper exists (`GET /api/local/recording`; 404 on Vercel) and, if not, explains what works on the live site and what needs the laptop.
+2. **Demo mode** (`?demo=1`, used by every home-page link): the family loop was invisible to visitors because the end-screen buttons need the helper's number from a share link. In demo mode the buttons stay and open an explanation instead; "I've got it" shows the exact report text the helper would receive. A real share link (with a contact) is never a demo.
+3. **Lesson page on a laptop:** phone-width column plus a visitor side panel ("You're seeing what the parent sees", how to practice with a mouse, Chinese via 简/繁, a QR code to open it on a phone). Hidden on phones and on real share links. Chosen over embedding the lesson in the home page (an iframe): same clarity, no nested scrolling or flaky touch inside an embedded page.
+4. **Home page:** who it's for, the three-step loop, two entry points ("Try a lesson as the parent" in demo mode / "See how a helper makes one"), and the lesson library folded in as cards with Practice and Share. A separate library page waits until there are more than ~6 lessons. The walkthrough video slot (`HELPER_VIDEO_EMBED` in `lib/site.ts`) stays empty until the Loom exists, so nothing unbuilt is shown as working.
+5. **Share page:** a phone-shaped preview of the message as the parent receives it (chat bubble + link card), and "Just looking? Use example details" (fictional 555 number, not saved over the helper's own details).
+6. **Link previews** (Open Graph): lessons advertise their Chinese title and first screen, so the card in iMessage/WeChat looks right for real parents too. `metadataBase` comes from `NEXT_PUBLIC_SITE_URL`, else Vercel's production URL, else caregiving-project.vercel.app.
+
+- **New dependency:** `qrcode` (MIT) + `@types/qrcode` (MIT). Generates the QR as SVG in the browser.
+- **Tests:** `lib/lesson/url.test.ts` (demo flag, share links), `lib/lesson/meta.test.ts` (link previews), `lib/home.test.ts` (library cards), `components/site/HomeView.test.tsx` and `components/share/ParentPhonePreview.test.tsx` (rendered pages). Vitest now also runs `components/**/*.test.tsx`.
+
+## 2026-10-06 — Thesis update: a toolkit for the helper; live site must explain itself
+
+- **Thesis:** this is a toolkit for the helper (an adult child helping an aging immigrant parent), not a digital-literacy curriculum. Core loop: record → editor finds steps → publish → parent practices with feedback → reports back or calls. Lessons are made just in time for the exact task a parent is stuck on, and resent when needed.
+- **Two kinds of lessons:** private (account-specific, e.g. a bank; stays in the family, never on the live site) and open library (general tasks; public). The library is the helper's catalog of "here's how to explain this thing", holding both just-in-time lessons and general basics. The parent still only ever gets one link per task.
+- **Demo lessons for the live site:** getting onto Wi-Fi, making text bigger, switching to the Chinese keyboard. All open-library, nothing private on screen. Replaces "Chase login + basics": Chase would be a private lesson.
+- **Current priority:** make the live site self-explanatory for a first-time visitor in two minutes (home page with "try as the parent" / "see how a helper makes one", a "live prototype" label, a library page, a share preview). Shown honestly: authoring runs on the author's laptop.
+- **Default language stays English** on the site so reviewers can follow the demo; links sent from the share page open in Chinese (`#lang=`). Replaces the earlier "switch the default to Chinese before parents use it".
+- **Off-thesis:** scam/judgment lessons, WeChat video export, and (for now) accounts and in-browser publishing. Removed from the roadmap.
+- **Concept cards:** moved to "on-thesis, later" at low priority. Worth doing if they're easy to attach to a step; not a focus now.
+
 ## 2026-10-04 — Pixelation boxes, clips, Watch mode
 
 - **Editor pixelate mode:** a "Mark steps / Pixelate" switch. Drag a box over private info; it belongs to the step whose range you're in (that step → the next step). The editor previews with a blur (`backdrop-filter`); publishing pixelates. "Copy to step N+1" for info that stays on screen. Boxes before the first step aren't needed (no still or clip covers that time).

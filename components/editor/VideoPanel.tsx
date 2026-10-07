@@ -54,6 +54,8 @@ interface Props {
   onMode: (mode: "steps" | "pixelate") => void;
   onBox: (stepIndex: number, box: RedactBox) => void;
   onRemoveBox: (stepIndex: number, boxIndex: number) => void;
+  /** False on the live site: auto-find and Publish need the helper's laptop. */
+  localHelper?: boolean | null;
 }
 
 export default function VideoPanel({
@@ -71,6 +73,7 @@ export default function VideoPanel({
   onMode,
   onBox,
   onRemoveBox,
+  localHelper = null,
 }: Props) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
@@ -207,8 +210,33 @@ export default function VideoPanel({
         }}
       >
         {!src && (
-          <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-neutral-500">
-            Load a screen recording to start.
+          <div className="absolute inset-0 flex items-center justify-center p-8">
+            <div className="max-w-md text-center text-neutral-600">
+              <p className="text-lg font-semibold text-neutral-900">
+                Load an iPhone screen recording to start.
+              </p>
+              <p className="mt-2 text-sm">
+                Use Chrome or Safari. The video stays in your browser; nothing
+                is uploaded.
+              </p>
+              {localHelper === false && (
+                <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-left text-sm text-amber-900">
+                  <p className="font-semibold">What works on the live site</p>
+                  <ul className="mt-1 list-disc pl-5">
+                    <li>Marking steps by doing them on the video</li>
+                    <li>Naming steps and seeing the parent&apos;s wording</li>
+                    <li>Drawing pixelation boxes, downloading lesson.json</li>
+                  </ul>
+                  <p className="mt-2 font-semibold">
+                    What runs on the helper&apos;s laptop
+                  </p>
+                  <ul className="mt-1 list-disc pl-5">
+                    <li>Finding the steps automatically</li>
+                    <li>Publish (pixelating and cutting the clips)</li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         )}
         {src && (

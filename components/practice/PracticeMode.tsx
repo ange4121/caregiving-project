@@ -18,6 +18,7 @@ import {
   type AttemptLog,
 } from "@/lib/report";
 import {
+  DemoSheet,
   expectedOf,
   ghostAction,
   primaryButton,
@@ -37,6 +38,9 @@ import {
   type GhostGesture,
 } from "./overlays";
 import PracticeStage from "./PracticeStage";
+
+const gotItButton =
+  "flex min-h-16 w-full items-center justify-center rounded-2xl bg-green-500 px-4 py-3 text-center text-[22px] font-semibold text-white active:bg-green-600";
 
 /** How long the green check shows before the clip plays. */
 const CORRECT_PAUSE_MS = 700;
@@ -79,6 +83,8 @@ export default function PracticeMode({
   const [finalLog, setFinalLog] = useState<AttemptLog[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const feedbackId = useRef(0);
+  // Demo mode: which end-screen button's explanation is open.
+  const [demoSheet, setDemoSheet] = useState<"got_it" | "help" | null>(null);
 
   useEffect(
     () => () => {
@@ -173,10 +179,7 @@ export default function PracticeMode({
         <footer className="flex flex-col gap-3 px-5 pb-4">
           {ctx.contact && (
             <>
-              <a
-                href={smsLink(ctx.contact, report)}
-                className="flex min-h-16 items-center justify-center rounded-2xl bg-green-500 px-4 py-3 text-center text-[22px] font-semibold text-white active:bg-green-600"
-              >
+              <a href={smsLink(ctx.contact, report)} className={gotItButton}>
                 {t.got_it.replace("{name}", ctx.name)}
               </a>
               <a href={faceTimeLink(ctx.contact)} className={primaryButton}>
@@ -189,10 +192,35 @@ export default function PracticeMode({
               )}
             </>
           )}
+          {!ctx.contact && ctx.demo && (
+            <>
+              <button
+                onClick={() => setDemoSheet("got_it")}
+                className={gotItButton}
+              >
+                {t.got_it.replace("{name}", ctx.name)}
+              </button>
+              <button
+                onClick={() => setDemoSheet("help")}
+                className={primaryButton}
+              >
+                {t.need_help.replace("{name}", ctx.name)}
+              </button>
+            </>
+          )}
           <button onClick={restart} className={secondaryButton}>
             {t.practice_again}
           </button>
         </footer>
+        {demoSheet && (
+          <DemoSheet
+            ctx={ctx}
+            message={demoSheet === "got_it" ? report : undefined}
+            onClose={() => setDemoSheet(null)}
+          >
+            {demoSheet === "got_it" ? t.demo_got_it_note : t.demo_help_note}
+          </DemoSheet>
+        )}
       </Shell>
     );
   }

@@ -1,0 +1,182 @@
+{
+  "id": "join-wifi",
+  "title_en": "Get onto Wi-Fi",
+  "title_zh_hans": "连上 Wi-Fi",
+  "title_zh_hant": "連上 Wi-Fi",
+  "ios_version": "26",
+  "iphone_model": "iPhone 17",
+  "video": {
+    "width": 1206,
+    "height": 2622,
+    "duration_ms": 30038
+  },
+  "steps": [
+    {
+      "index": 0,
+      "t_ms": 1700,
+      "gesture": "swipe",
+      "x": 0.85,
+      "y": 0.02,
+      "swipe_direction": "down",
+      "system_gesture": true,
+      "target_radius": 0.12,
+      "element_label": "Control Center",
+      "note_en": "",
+      "blur": [
+        {
+          "x": 0.55,
+          "y": 0.57,
+          "w": 0.28,
+          "h": 0.04
+        }
+      ],
+      "still": "step-0.jpg",
+      "clip": "clip-0.mp4",
+      "caption_en": "Swipe down from the top-right corner of the screen",
+      "caption_zh_hans": "从屏幕右上角往下滑",
+      "caption_zh_hant": "從螢幕右上角往下滑"
+    },
+    {
+      "index": 1,
+      "t_ms": 2300,
+      "gesture": "hold",
+      "x": 0.287,
+      "y": 0.259,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.17,
+      "element_label": "Wi-Fi",
+      "note_en": "",
+      "blur": [],
+      "still": "step-1.jpg",
+      "clip": "clip-1.mp4",
+      "caption_en": "Press and hold \"Wi-Fi\"",
+      "caption_zh_hans": "长按 \"Wi-Fi\"",
+      "caption_zh_hant": "長按 \"Wi-Fi\""
+    },
+    {
+      "index": 2,
+      "t_ms": 4400,
+      "gesture": "tap",
+      "x": 0.289,
+      "y": 0.306,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.15,
+      "element_label": "Wi-Fi",
+      "note_en": "",
+      "blur": [],
+      "still": "step-2.jpg",
+      "clip": "clip-2.mp4",
+      "caption_en": "Tap \"Wi-Fi\"",
+      "caption_zh_hans": "点一下 \"Wi-Fi\"",
+      "caption_zh_hant": "點一下 \"Wi-Fi\""
+    },
+    {
+      "index": 3,
+      "t_ms": 8300,
+      "gesture": "tap",
+      "x": 0.439,
+      "y": 0.286,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.1,
+      "element_label": "Wi-Fi Settings...",
+      "note_en": "",
+      "blur": [
+        {
+          "x": 0.12,
+          "y": 0.23,
+          "w": 0.5,
+          "h": 0.07
+        },
+        {
+          "x": 0.1,
+          "y": 0.52,
+          "w": 0.4,
+          "h": 0.22
+        }
+      ],
+      "still": "step-3.jpg",
+      "clip": "clip-3.mp4",
+      "caption_en": "Tap \"Wi-Fi Settings...\"",
+      "caption_zh_hans": "点一下 \"Wi-Fi Settings...\"",
+      "caption_zh_hant": "點一下 \"Wi-Fi Settings...\""
+    },
+    {
+      "index": 4,
+      "t_ms": 14700,
+      "gesture": "tap",
+      "x": 0.5,
+      "y": 0.538,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.1,
+      "element_label": "your Wi-Fi network",
+      "note_en": "Your home network's name",
+      "blur": [
+        {
+          "x": 0.05,
+          "y": 0.29,
+          "w": 0.65,
+          "h": 0.71
+        }
+      ],
+      "still": "step-4.jpg",
+      "clip": "clip-4.mp4",
+      "caption_en": "Tap \"your Wi-Fi network\"",
+      "caption_zh_hans": "点一下 \"your Wi-Fi network\"",
+      "caption_zh_hant": "點一下 \"your Wi-Fi network\""
+    },
+    {
+      "index": 5,
+      "t_ms": 15600,
+      "gesture": "self",
+      "x": null,
+      "y": null,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": null,
+      "element_label": "",
+      "note_en": "Type your Wi-Fi password",
+      "blur": [
+        {
+          "x": 0.08,
+          "y": 0.31,
+          "w": 0.55,
+          "h": 0.045
+        }
+      ],
+      "still": "step-5.jpg",
+      "clip": "clip-5.mp4",
+      "caption_en": "Do this yourself: Type your Wi-Fi password",
+      "caption_zh_hans": "自己做这一步：Type your Wi-Fi password",
+      "caption_zh_hant": "自己做這一步：Type your Wi-Fi password"
+    },
+    {
+      "index": 6,
+      "t_ms": 23000,
+      "gesture": "tap",
+      "x": 0.9,
+      "y": 0.115,
+      "swipe_direction": null,
+      "system_gesture": false,
+      "target_radius": 0.08,
+      "element_label": "✓",
+      "note_en": "",
+      "blur": [
+        {
+          "x": 0.05,
+          "y": 0.29,
+          "w": 0.65,
+          "h": 0.71
+        }
+      ],
+      "still": "step-6.jpg",
+      "clip": "clip-6.mp4",
+      "caption_en": "Tap \"✓\"",
+      "caption_zh_hans": "点一下 \"✓\"",
+      "caption_zh_hant": "點一下 \"✓\""
+    }
+  ]
+}

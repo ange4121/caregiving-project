@@ -32,6 +32,8 @@ export interface Lesson {
   title_zh_hans?: string;
   title_zh_hant?: string;
   ios_version: string;
+  /** The iPhone it was recorded on, e.g. "iPhone 16 Pro". Shown with the iOS version. */
+  iphone_model?: string;
   video: { width: number; height: number; duration_ms: number };
   steps: LessonStep[];
 }

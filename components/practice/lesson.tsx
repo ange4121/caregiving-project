@@ -10,7 +10,6 @@ import type {
 import {
   captionFor,
   DEFAULT_LANG,
-  isLang,
   LANGS,
   stringsFor,
   type Lang,
@@ -18,7 +17,7 @@ import {
 } from "@/lib/i18n";
 import type { ManifestStep } from "@/lib/lesson/types";
 import { faceTimeLink } from "@/lib/report";
-import { parseShareFragment } from "@/lib/share";
+import { readLessonUrl } from "@/lib/lesson/url";
 import type { GhostGesture } from "./overlays";
 
 // Shared pieces for the learner's lesson screens (start, watch, practice).
@@ -32,6 +31,8 @@ export interface LessonCtx {
   /** What the parent calls the child ("小雨"), or a generic fallback. */
   name: string;
   inWeChat: boolean;
+  /** Opened from the public home page: end-screen buttons explain instead of acting. */
+  demo: boolean;
 }
 
 /** Language, contact, and browser come from the URL and user agent (client only). */
@@ -40,16 +41,15 @@ export function useLessonCtx(): LessonCtx {
   const [contact, setContact] = useState<string | null>(null);
   const [childName, setChildName] = useState<string | null>(null);
   const [inWeChat, setInWeChat] = useState(false);
+  const [demo, setDemo] = useState(false);
 
   useEffect(() => {
-    // ?lang= (for testing) beats #lang= (from the child's share link).
-    const fromQuery = new URLSearchParams(window.location.search).get("lang");
-    const share = parseShareFragment(window.location.hash);
-    const fromUrl = isLang(fromQuery) ? fromQuery : share.lang;
+    const url = readLessonUrl(window.location.search, window.location.hash);
     /* eslint-disable react-hooks/set-state-in-effect */
-    if (isLang(fromUrl)) setLang(fromUrl);
-    setContact(share.contact);
-    setChildName(share.childName);
+    if (url.lang) setLang(url.lang);
+    setContact(url.contact);
+    setChildName(url.childName);
+    setDemo(url.demo);
     setInWeChat(/MicroMessenger/i.test(navigator.userAgent));
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
@@ -62,6 +62,7 @@ export function useLessonCtx(): LessonCtx {
     contact,
     name: childName ?? t.child_fallback,
     inWeChat,
+    demo,
   };
 }
 
@@ -116,10 +117,11 @@ export function Shell({
   showHelp?: boolean;
   children: React.ReactNode;
 }) {
+  const [helpNote, setHelpNote] = useState(false);
   return (
     <div
       lang={ctx.lang}
-      className="flex h-dvh flex-col bg-neutral-950 text-white"
+      className="relative flex h-dvh flex-col bg-neutral-950 text-white"
       style={{
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
@@ -129,12 +131,14 @@ export function Shell({
     >
       <div className="flex items-center gap-1 px-4 pt-1">
         {showHelp && ctx.contact && (
-          <a
-            href={faceTimeLink(ctx.contact)}
-            className="flex h-11 items-center rounded-full border border-neutral-600 px-4 text-lg text-neutral-200 active:bg-neutral-800"
-          >
+          <a href={faceTimeLink(ctx.contact)} className={helpPill}>
             {ctx.t.help_short}
           </a>
+        )}
+        {showHelp && !ctx.contact && ctx.demo && (
+          <button onClick={() => setHelpNote(true)} className={helpPill}>
+            {ctx.t.help_short}
+          </button>
         )}
         <div className="flex-1" />
         {LANGS.map((l) => (
@@ -153,6 +157,58 @@ export function Shell({
         ))}
       </div>
       {children}
+      {helpNote && (
+        <DemoSheet ctx={ctx} onClose={() => setHelpNote(false)}>
+          {ctx.t.demo_help_note}
+        </DemoSheet>
+      )}
+    </div>
+  );
+}
+
+const helpPill =
+  "flex h-11 items-center rounded-full border border-neutral-600 px-4 text-lg text-neutral-200 active:bg-neutral-800";
+
+/**
+ * Demo mode: explains what a button would do in a real link from a helper,
+ * optionally showing the message that would be sent.
+ */
+export function DemoSheet({
+  ctx,
+  message,
+  onClose,
+  children,
+}: {
+  ctx: LessonCtx;
+  message?: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="absolute inset-0 z-50 flex items-end bg-black/60"
+      onClick={onClose}
+    >
+      <div
+        className="w-full rounded-t-3xl bg-neutral-900 px-5 pb-6 pt-5 text-white"
+        style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="rounded-full bg-amber-400 px-2.5 py-0.5 text-sm font-semibold text-neutral-900">
+          {ctx.t.demo_badge}
+        </span>
+        <p className="mt-3 text-xl leading-relaxed">{children}</p>
+        {message && (
+          <p className="mt-4 whitespace-pre-wrap rounded-2xl rounded-br-md bg-green-500 px-4 py-3 text-lg leading-relaxed">
+            {message}
+          </p>
+        )}
+        <button onClick={onClose} className={`${primaryButton} mt-5`}>
+          {ctx.t.demo_close}
+        </button>
+      </div>
     </div>
   );
 }
