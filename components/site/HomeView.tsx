@@ -410,10 +410,6 @@ export default function HomeView({
           <a href={REPO_URL} className="underline">
             GitHub
           </a>
-          ·
-          <span>
-            Built for the Assembly Code Incubator, Cohort 02 (caregiving)
-          </span>
         </footer>
       </main>
     </div>
