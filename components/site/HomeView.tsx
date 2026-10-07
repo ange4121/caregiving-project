@@ -90,7 +90,7 @@ export default function HomeView({
           ))}
         </section>
 
-        <section className="mt-12 grid gap-6 md:grid-cols-2">
+        <section className="mt-12 grid gap-6 md:grid-cols-2 md:items-start">
           {featured && (
             <div className="flex flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-6">
               <h2 className="text-2xl font-semibold">
@@ -101,12 +101,12 @@ export default function HomeView({
                 the feedback. At the end you&apos;ll see what the parent&apos;s
                 &ldquo;I&apos;ve got it&rdquo; text to the helper looks like.
               </p>
-              <div className="mt-5 flex flex-1 items-end gap-5">
+              <div className="mt-5 flex items-center gap-5">
                 {/* eslint-disable-next-line @next/next/no-img-element -- static still */}
                 <img
                   src={featured.thumb}
                   alt=""
-                  className="h-44 w-auto rounded-xl border-4 border-neutral-900"
+                  className="h-56 w-auto rounded-xl border-4 border-neutral-900"
                 />
                 <div>
                   <p className="font-semibold">{featured.titleEn}</p>

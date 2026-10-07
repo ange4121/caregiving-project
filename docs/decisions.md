@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Share page defaults; shorter message
+
+- First-time visitors to a share page see example details filled in, labelled "Example number, not a real one". The example uses +1 415 555 0123: US 555-0100–0199 numbers are reserved as fictional, unlike an arbitrary number in a real area code (e.g. 341), which could belong to someone a demo link would FaceTime.
+- Removed "做错了也没关系 / It's fine to make mistakes" from the share message at Shuxin's request.
+- Home page: the "Try a lesson" card no longer stretches to the height of the video card beside it.
+
 ## 2026-10-06 — Text size lesson, timed pixelation boxes, Loom on the home page
 
 - **Text size** was made live in the editor on the Loom recording (6 steps, trimmed end). Before publishing publicly it was re-published with pixelation for the city on the home screen and, for ~2 s, the account name and home network shown at the top of Settings.

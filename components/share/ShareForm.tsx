@@ -11,6 +11,7 @@ import {
   buildShareMessageEnglish,
   isValidContact,
   lacksCountryCode,
+  normalizeContact,
   PARENT_NAMES,
   type ParentScript,
 } from "@/lib/share";
@@ -43,12 +44,13 @@ const EMPTY: Saved = {
   script: "zh-Hans",
 };
 
+/** The helper's saved details, or the example for a first-time visitor. */
 function load(): Saved {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...EMPTY, ...JSON.parse(raw) } : EMPTY;
+    return raw ? { ...EMPTY, ...JSON.parse(raw) } : EXAMPLE;
   } catch {
-    return EMPTY;
+    return EXAMPLE;
   }
 }
 
@@ -91,13 +93,14 @@ export default function ShareForm({
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  const [isExample, setIsExample] = useState(false);
+  // The example number is fictional (555-01xx is reserved), so say so.
+  const isExample =
+    normalizeContact(form.contact) === normalizeContact(EXAMPLE.contact);
 
   const update = (patch: Partial<Saved>, remember = true) => {
     const next = { ...form, ...patch };
     setForm(next);
     setCopied(null);
-    setIsExample(!remember);
     if (!remember) return; // Example details aren't saved over the helper's own.
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -229,6 +232,12 @@ export default function ShareForm({
             {!contactOk && (
               <p className="mt-1 text-sm text-red-600">
                 That doesn&apos;t look like a phone number or email.
+              </p>
+            )}
+            {isExample && (
+              <p className="mt-1 text-sm text-amber-700">
+                Example number, not a real one (US 555-01xx numbers are reserved
+                for fiction). Put in your own before sending.
               </p>
             )}
             {needsCountryCode && (

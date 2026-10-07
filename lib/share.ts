@@ -72,16 +72,12 @@ export const PARENT_NAMES: { zh: string; en: string }[] = [
 
 const TEMPLATES = {
   "zh-Hans": {
-    withTitle:
-      "{parent}，我给你做了一个小练习：{title}。有空的时候点开试试，做错了也没关系。",
-    noTitle:
-      "{parent}，我给你做了一个小练习。有空的时候点开试试，做错了也没关系。",
+    withTitle: "{parent}，我给你做了一个小练习：{title}。有空的时候点开试试。",
+    noTitle: "{parent}，我给你做了一个小练习。有空的时候点开试试。",
   },
   "zh-Hant": {
-    withTitle:
-      "{parent}，我給你做了一個小練習：{title}。有空的時候點開試試，做錯了也沒關係。",
-    noTitle:
-      "{parent}，我給你做了一個小練習。有空的時候點開試試，做錯了也沒關係。",
+    withTitle: "{parent}，我給你做了一個小練習：{title}。有空的時候點開試試。",
+    noTitle: "{parent}，我給你做了一個小練習。有空的時候點開試試。",
   },
 };
 
@@ -106,5 +102,5 @@ export function buildShareMessageEnglish(opts: {
   titleEn: string;
 }): string {
   const parent = opts.parentNameEn.trim() || "Hi";
-  return `${parent}, I made you a little practice: ${opts.titleEn}. Try it when you have time. It's fine to make mistakes.`;
+  return `${parent}, I made you a little practice: ${opts.titleEn}. Try it when you have time.`;
 }

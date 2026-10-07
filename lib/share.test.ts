@@ -78,7 +78,7 @@ describe("share message", () => {
       link: "https://x.app/l/abc#lang=zh-Hans",
     });
     expect(msg).toBe(
-      "妈，我给你做了一个小练习：从控制中心打开 Wi-Fi 列表。有空的时候点开试试，做错了也没关系。\nhttps://x.app/l/abc#lang=zh-Hans",
+      "妈，我给你做了一个小练习：从控制中心打开 Wi-Fi 列表。有空的时候点开试试。\nhttps://x.app/l/abc#lang=zh-Hans",
     );
   });
 
@@ -89,16 +89,14 @@ describe("share message", () => {
       title: undefined,
       link: "L",
     });
-    expect(msg).toBe(
-      "爸，我給你做了一個小練習。有空的時候點開試試，做錯了也沒關係。\nL",
-    );
+    expect(msg).toBe("爸，我給你做了一個小練習。有空的時候點開試試。\nL");
   });
 
   it("gives the author an English version", () => {
     expect(
       buildShareMessageEnglish({ parentNameEn: "Mom", titleEn: "Open Wi-Fi" }),
     ).toBe(
-      "Mom, I made you a little practice: Open Wi-Fi. Try it when you have time. It's fine to make mistakes.",
+      "Mom, I made you a little practice: Open Wi-Fi. Try it when you have time.",
     );
   });
 });
