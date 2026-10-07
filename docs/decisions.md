@@ -2,6 +2,10 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-07 — Example phone number is a placeholder: +1 ###-###-####
+
+- Replaces the 555 example. A placeholder can't belong to anyone, so no demo link can call or text a real person. While it's showing, the generated link leaves the number out and opens in demo mode (the end-screen buttons explain instead of acting), and the "doesn't look like a number" warnings are suppressed. A previously saved example number in a visitor's browser is swapped for the placeholder.
+
 ## 2026-10-07 — Site palette matches the presentation
 
 - Cream / navy / coral (+ peach, sand, umber) as Tailwind theme colours, applied to the home page, share page, banner, and the laptop visitor panel.
@@ -36,7 +40,7 @@ Newest first. Each entry: date, decision, options considered, why.
 
 ## 2026-10-06 — Share page defaults; shorter message
 
-- First-time visitors to a share page see example details filled in, labelled "Example number, not a real one". The example uses +1 415 555 0123: US 555-0100–0199 numbers are reserved as fictional, unlike an arbitrary number in a real area code (e.g. 341), which could belong to someone a demo link would FaceTime.
+- (Superseded Oct 7 by the +1 ###-###-#### placeholder.) First-time visitors to a share page see example details filled in, labelled "Example number, not a real one". The example uses +1 415 555 0123: US 555-0100–0199 numbers are reserved as fictional, unlike an arbitrary number in a real area code (e.g. 341), which could belong to someone a demo link would FaceTime.
 - Removed "做错了也没关系 / It's fine to make mistakes" from the share message at Shuxin's request.
 - Home page: the "Try a lesson" card no longer stretches to the height of the video card beside it.
 

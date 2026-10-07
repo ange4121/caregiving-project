@@ -27,12 +27,12 @@ interface Saved {
   script: ParentScript;
 }
 
-/** For visitors: shows the preview without typing real details (555-01xx is a fictional range). */
+/** For visitors: shows the preview without typing real details. The number is a placeholder, not a number. */
 const EXAMPLE: Saved = {
   parentName: "妈",
   parentNameEn: "Mom",
   childName: "小雨",
-  contact: "+1 415 555 0123",
+  contact: "+1 ###-###-####",
   script: "zh-Hans",
 };
 
@@ -48,7 +48,15 @@ const EMPTY: Saved = {
 function load(): Saved {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? { ...EMPTY, ...JSON.parse(raw) } : EXAMPLE;
+    if (!raw) return EXAMPLE;
+    const saved: Saved = { ...EMPTY, ...JSON.parse(raw) };
+    // An earlier example number may have been saved; show the current one.
+    if (
+      ["+14155550123", "+13417995919"].includes(normalizeContact(saved.contact))
+    ) {
+      saved.contact = EXAMPLE.contact;
+    }
+    return saved;
   } catch {
     return EXAMPLE;
   }
@@ -93,7 +101,7 @@ export default function ShareForm({
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  // The example number is fictional (555-01xx is reserved), so say so.
+  // The example "number" is a placeholder: say so, and keep it out of links.
   const isExample =
     normalizeContact(form.contact) === normalizeContact(EXAMPLE.contact);
 
@@ -109,11 +117,18 @@ export default function ShareForm({
     }
   };
 
-  const link = buildLessonLink(origin, manifest.id, {
-    lang: form.script,
-    contact: form.contact,
-    childName: form.childName,
-  });
+  // With the placeholder, the link carries no number and opens in demo mode,
+  // so the end-screen buttons explain instead of trying to call anyone.
+  const link = (() => {
+    const l = buildLessonLink(origin, manifest.id, {
+      lang: form.script,
+      contact: isExample ? "" : form.contact,
+      childName: form.childName,
+    });
+    return isExample
+      ? l.replace(`/l/${manifest.id}#`, `/l/${manifest.id}?demo=1#`)
+      : l;
+  })();
   const title =
     form.script === "zh-Hant" ? manifest.title_zh_hant : manifest.title_zh_hans;
   const message = buildShareMessage({
@@ -127,8 +142,10 @@ export default function ShareForm({
     titleEn: manifest.title_en,
   });
 
-  const contactOk = form.contact.trim() === "" || isValidContact(form.contact);
-  const needsCountryCode = contactOk && lacksCountryCode(form.contact);
+  const contactOk =
+    isExample || form.contact.trim() === "" || isValidContact(form.contact);
+  const needsCountryCode =
+    !isExample && contactOk && lacksCountryCode(form.contact);
   const preset = PARENT_NAMES.find((p) => p.zh === form.parentName);
 
   const onCopy = async (what: "message" | "link") => {
@@ -222,7 +239,7 @@ export default function ShareForm({
             <input
               value={form.contact}
               onChange={(e) => update({ contact: e.target.value })}
-              placeholder="+1 415 555 0123"
+              placeholder="+1 ###-###-####"
               inputMode="email"
               autoComplete="tel"
               className={`h-12 w-full rounded-xl border px-4 text-lg ${
@@ -236,8 +253,7 @@ export default function ShareForm({
             )}
             {isExample && (
               <p className="mt-1 text-sm text-amber-700">
-                Example number, not a real one (US 555-01xx numbers are reserved
-                for fiction). Put in your own before sending.
+                Example. Put in your own number before sending.
               </p>
             )}
             {needsCountryCode && (
