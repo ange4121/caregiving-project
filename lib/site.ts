@@ -9,6 +9,9 @@ export const SITE_URL =
 
 export const REPO_URL = "https://github.com/ange4121/caregiving-project";
 
+/** README section on making a lesson (setup: Node.js, ffmpeg, the dev server). */
+export const SETUP_URL = `${REPO_URL}#make-a-lesson`;
+
 /**
  * Embed URL of the "how a helper makes a lesson" walkthrough (e.g. a Loom
  * embed link, https://www.loom.com/embed/<id>). Null until it's recorded; the

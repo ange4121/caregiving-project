@@ -34,6 +34,8 @@ npm run build
 
 ## Make a lesson
 
+For now this needs the developer setup under [Develop](#develop): Node.js, ffmpeg, and this repo running with `npm run dev`. (On the live site you can try marking steps by hand, but finding steps and publishing need this setup.)
+
 1. Screen-record the task on your iPhone and copy the video to your laptop (keep recordings in `fixtures/`, which git ignores).
 2. Run `npm run dev` and open the editor at **`http://localhost:<port>/editor`** in Chrome or Safari. It must be `localhost`: the editor's local helper refuses requests from other addresses.
 3. Load the recording. Use **✂ Trim start / Trim end / Cut a section** to leave out waiting, loading, or mistakes (the recording itself isn't changed). Review the suggested moments (Enter = accept the suggested tap, S = not a step, or do the real gesture on the video), name each step, and switch to **Pixelate** to cover anything private.

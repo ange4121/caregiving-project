@@ -26,7 +26,10 @@ describe("HomeView", () => {
 
   it("labels the site as a live prototype and says what runs locally", () => {
     expect(html).toContain("Live prototype.");
-    expect(html).toContain("runs on the helper");
+    expect(html).toContain("runs on the author");
+    expect(html).toContain(
+      "github.com/ange4121/caregiving-project#make-a-lesson",
+    );
   });
 
   it("offers both ways in", () => {

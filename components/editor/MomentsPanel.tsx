@@ -64,9 +64,9 @@ export default function MomentsPanel({
   if (helper === "unavailable") {
     return (
       <div className="border-b border-neutral-200 px-4 py-3 text-xs text-neutral-500">
-        Auto-find and Publish work when the editor runs on your laptop (
-        <code>npm run dev</code>, at <code>localhost</code>). You can still mark
-        steps by hand.
+        Auto-find and Publish run on the author&apos;s computer for now (a
+        developer setup with Node.js and ffmpeg). You can still mark steps by
+        hand.
       </div>
     );
   }

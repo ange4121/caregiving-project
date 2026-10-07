@@ -345,7 +345,7 @@ export default function Editor() {
       ? "Getting the recording ready…"
       : !token
         ? localHelper === false
-          ? "Publish runs on the helper's laptop (not on the live site)."
+          ? "Publish runs on the author's computer for now (a developer setup with Node.js and ffmpeg)."
           : "Publishing only works on your laptop, at http://localhost."
         : (problems[0] ?? null);
   const needsVideo = !src && lesson.steps.length > 0 && videoName;

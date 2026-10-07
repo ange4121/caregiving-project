@@ -16,7 +16,7 @@ export default function PrototypeBanner({
       }`}
     >
       <b>Live prototype.</b> These lessons are real and work on any iPhone.
-      Making a lesson currently runs on the helper&apos;s own laptop, so
+      Making a lesson currently runs on the author&apos;s own computer, so
       recordings never leave it.{" "}
       <Link href="/#how" className="underline">
         How it works

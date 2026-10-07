@@ -16,6 +16,7 @@ import {
   type GestureFields,
 } from "@/lib/editor/draft";
 import { cutAt } from "@/lib/lesson/cuts";
+import { SETUP_URL } from "@/lib/site";
 import type { Lesson, RedactBox } from "@/lib/lesson/types";
 import { LiveHoldRing } from "@/components/practice/overlays";
 
@@ -55,7 +56,7 @@ interface Props {
   onMode: (mode: "steps" | "pixelate") => void;
   onBox: (stepIndex: number, box: RedactBox) => void;
   onRemoveBox: (stepIndex: number, boxIndex: number) => void;
-  /** False on the live site: auto-find and Publish need the helper's laptop. */
+  /** False on the live site: auto-find and Publish need the author's developer setup. */
   localHelper?: boolean | null;
   /** Leave `start`–`end` out of the published lesson (ms, any order). */
   onAddCut: (start: number, end: number) => void;
@@ -255,7 +256,19 @@ export default function VideoPanel({
                     <li>Drawing pixelation boxes, downloading lesson.json</li>
                   </ul>
                   <p className="mt-2 font-semibold">
-                    What runs on the helper&apos;s laptop
+                    What runs on the author&apos;s computer for now
+                  </p>
+                  <p className="mt-0.5">
+                    A developer setup with Node.js and ffmpeg;{" "}
+                    <a
+                      href={SETUP_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline"
+                    >
+                      see the README
+                    </a>
+                    .
                   </p>
                   <ul className="mt-1 list-disc pl-5">
                     <li>Finding the steps automatically</li>

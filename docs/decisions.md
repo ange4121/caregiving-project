@@ -2,6 +2,10 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Say plainly that making lessons needs a developer setup
+
+- "Runs on the helper's laptop" implied any helper could do it. Today it needs Node.js, ffmpeg, this repo, and `npm run dev`, and publishing only writes into that copy. The site now says "runs on the author's computer for now (a developer setup with Node.js and ffmpeg)" in the banner, home page, and editor, linking to the README's "Make a lesson" section. Any helper can still send public lessons with no setup.
+
 ## 2026-10-06 — Share page defaults; shorter message
 
 - First-time visitors to a share page see example details filled in, labelled "Example number, not a real one". The example uses +1 415 555 0123: US 555-0100–0199 numbers are reserved as fictional, unlike an arbitrary number in a real area code (e.g. 341), which could belong to someone a demo link would FaceTime.

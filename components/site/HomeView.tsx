@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { LessonCard } from "@/lib/home";
-import { REPO_URL } from "@/lib/site";
+import { REPO_URL, SETUP_URL } from "@/lib/site";
 import PrototypeBanner from "./PrototypeBanner";
 
 const LOOP = [
@@ -151,7 +151,12 @@ export default function HomeView({
                 Open the editor
               </Link>{" "}
               to try marking steps by hand. Finding steps automatically and
-              publishing run on the helper&apos;s laptop for now.
+              publishing run on the author&apos;s computer for now (a developer
+              setup with Node.js and ffmpeg;{" "}
+              <a href={SETUP_URL} className="underline">
+                see the README
+              </a>
+              ).
             </p>
           </div>
         </section>
