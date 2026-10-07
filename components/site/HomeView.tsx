@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { LessonCard } from "@/lib/home";
+import { typicalMistake, type LessonCard } from "@/lib/home";
 import { buildReportMessage } from "@/lib/report";
 import { REPO_URL, SETUP_URL } from "@/lib/site";
 import PrototypeBanner from "./PrototypeBanner";
@@ -37,10 +37,12 @@ function loopSteps(featured: LessonCard | undefined) {
  * lesson uses (here: step 2 took two tries).
  */
 function sampleReport(featured: LessonCard | undefined) {
+  // Step 2 took two tries, with a mistake that fits step 2's gesture.
+  const mistake = typicalMistake(featured?.gestures[1]);
   const text = buildReportMessage({
     script: "zh-Hans",
     titleZh: featured?.titleZh ?? undefined,
-    titleEn: featured?.titleEn ?? "Get onto Wi-Fi",
+    titleEn: featured?.titleEn ?? "Make the text bigger",
     log: [
       {
         step: 0,
@@ -49,18 +51,22 @@ function sampleReport(featured: LessonCard | undefined) {
         durationMs: 120,
         ambiguousPress: false,
       },
-      {
-        step: 1,
-        ok: false,
-        error: "hold_too_short",
-        durationMs: 300,
-        ambiguousPress: false,
-      },
+      ...(mistake
+        ? [
+            {
+              step: 1,
+              ok: false,
+              error: mistake,
+              durationMs: 700,
+              ambiguousPress: false,
+            },
+          ]
+        : []),
       {
         step: 1,
         ok: true,
         error: null,
-        durationMs: 800,
+        durationMs: 120,
         ambiguousPress: false,
       },
     ],

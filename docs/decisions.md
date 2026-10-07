@@ -2,6 +2,11 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-07 — Feature "Making Text Size Bigger"
+
+- The home page's "Try it as the parent" (and the step links and library order) now lead with the Text size lesson: it's the one made in the Loom, mostly taps, and has little pixelation.
+- The sample report-back bubble picks a mistake that fits the featured lesson's step 2 gesture (`typicalMistake`), so it stays plausible whichever lesson is featured.
+
 ## 2026-10-07 — Back to a short, plain hero
 
 - The visual hero (phone mock with floating feedback and report cards, coloured wash) read as too much of a sales pitch. Returned to the short hero (headline, one paragraph, three buttons) followed directly by the four steps. Kept the wider layout, top nav, green accents, and card styling.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Manifest } from "@/lib/lesson/types";
-import { lessonCards, recordedOn } from "./home";
+import { lessonCards, recordedOn, typicalMistake } from "./home";
 
 const m = (id: string, title_en: string, extra: Partial<Manifest> = {}) =>
   ({
@@ -8,7 +8,10 @@ const m = (id: string, title_en: string, extra: Partial<Manifest> = {}) =>
     title_en,
     ios_version: "26",
     video: { width: 1, height: 2, duration_ms: 1 },
-    steps: [{ still: "step-0.jpg" }, { still: "step-1.jpg" }],
+    steps: [
+      { still: "step-0.jpg", gesture: "tap" },
+      { still: "step-1.jpg", gesture: "hold" },
+    ],
     ...extra,
   }) as unknown as Manifest;
 
@@ -34,6 +37,7 @@ describe("lessonCards", () => {
       iosVersion: "26",
       recordedOn: "iOS 26",
       thumb: "/lessons/wifi/step-0.jpg",
+      gestures: ["tap", "hold"],
       practiceHref: "/l/wifi?demo=1",
       shareHref: "/share/wifi",
     });
@@ -49,5 +53,15 @@ describe("recordedOn", () => {
     expect(recordedOn({ iphone_model: " ", ios_version: "18.6" })).toBe(
       "iOS 18.6",
     );
+  });
+});
+
+describe("typicalMistake", () => {
+  it("fits the gesture", () => {
+    expect(typicalMistake("tap")).toBe("tap_too_long");
+    expect(typicalMistake("hold")).toBe("hold_too_short");
+    expect(typicalMistake("swipe")).toBe("swipe_too_short");
+    expect(typicalMistake("self")).toBeNull();
+    expect(typicalMistake(undefined)).toBeNull();
   });
 });

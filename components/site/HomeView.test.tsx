@@ -11,6 +11,7 @@ const card = (id: string, titleEn: string): LessonCard => ({
   iosVersion: "26",
   recordedOn: "iPhone 16 Pro · iOS 26",
   thumb: `/lessons/${id}/step-0.jpg`,
+  gestures: ["tap", "hold", "tap"],
   practiceHref: `/l/${id}?demo=1`,
   shareHref: `/share/${id}`,
 });

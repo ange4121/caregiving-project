@@ -21,4 +21,4 @@ export const HELPER_VIDEO_EMBED: string | null =
   "https://www.loom.com/embed/f4cd32655ce34453be50e45867cb5c74";
 
 /** The lesson the home page offers first ("Try a lesson as the parent"). */
-export const FEATURED_LESSON_ID = "join-wifi";
+export const FEATURED_LESSON_ID = "making-text-size-bigger";
