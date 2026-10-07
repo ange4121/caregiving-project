@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { LessonCard } from "@/lib/home";
 import { buildReportMessage } from "@/lib/report";
-import zhHans from "@/locales/zh-Hans.json";
 import { REPO_URL, SETUP_URL } from "@/lib/site";
 import PrototypeBanner from "./PrototypeBanner";
 
@@ -78,58 +77,6 @@ const MAKE_STEPS = [
 ];
 
 /** The public home page: what this is, two ways in, and the lesson library. */
-/** Hero picture: the real lesson in a phone, with the moments that matter around it. */
-function HeroPhone({
-  featured,
-  reportZh,
-}: {
-  featured: LessonCard;
-  reportZh: string;
-}) {
-  return (
-    <div className="relative mx-auto w-full max-w-[540px] py-4">
-      <div className="mx-auto w-[230px] rounded-[2.6rem] bg-neutral-900 p-2 shadow-2xl ring-1 ring-black/10 sm:w-[250px]">
-        <div className="overflow-hidden rounded-[2.1rem] bg-neutral-950 text-white">
-          <div className="px-4 pb-2 pt-4" lang="zh-Hans">
-            <p className="text-[11px] text-neutral-400">
-              第1步，共{featured.steps}步
-            </p>
-            <p className="text-sm font-semibold leading-snug">
-              {featured.firstCaptionZh ?? featured.titleZh ?? featured.titleEn}
-            </p>
-          </div>
-          {/* eslint-disable-next-line @next/next/no-img-element -- static still */}
-          <img src={featured.thumb} alt="" className="block w-full" />
-        </div>
-      </div>
-
-      <div className="absolute left-0 top-[36%] hidden w-48 -rotate-2 rounded-2xl border border-amber-200 bg-white p-3 shadow-lg sm:block">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">
-          Feedback on the exact mistake
-        </p>
-        <p lang="zh-Hans" className="mt-1 text-sm font-medium text-neutral-900">
-          {zhHans.errors.tap_too_long}
-        </p>
-        <p className="text-xs text-neutral-500">
-          You pressed too long. Like a doorbell: touch it and let go.
-        </p>
-      </div>
-
-      <div className="absolute bottom-12 right-0 hidden w-48 rotate-2 sm:block">
-        <p className="mb-1 text-right text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
-          Then they text you
-        </p>
-        <p
-          lang="zh-Hans"
-          className="whitespace-pre-line rounded-2xl rounded-br-md bg-green-500 px-3 py-2 text-sm leading-snug text-white shadow-lg"
-        >
-          {reportZh}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 const card =
   "rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-md";
 const stepBadge =
@@ -171,61 +118,47 @@ export default function HomeView({
         </div>
       </nav>
 
-      <section className="bg-gradient-to-b from-emerald-50 via-amber-50/50 to-white">
-        <div
-          className={`${container} grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_540px] lg:py-16`}
-        >
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
-              For adult children helping an aging parent with their iPhone
-            </p>
-            <h1 className="mt-3 max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-              Show your parent a phone task once. They practice it on their own
-              phone.
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-neutral-600">
-              You record the steps. Your parent gets a link, practices each step
-              on pictures of the real screens, and is told exactly what went
-              wrong (&ldquo;you held too long&rdquo;), in Chinese. When
-              they&apos;re done, they text you back, or FaceTime you if
-              they&apos;re stuck.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              {featured && (
-                <Link
-                  href={featured.practiceHref}
-                  className="rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white shadow-sm hover:bg-neutral-800"
-                >
-                  Try it as the parent →
-                </Link>
-              )}
-              <a
-                href="#make"
-                className="rounded-xl border border-neutral-300 bg-white px-5 py-3 font-semibold hover:border-neutral-400"
-              >
-                Watch a helper make one (1½ min)
-              </a>
-              <a
-                href="#lessons"
-                className="rounded-xl border border-neutral-300 bg-white px-5 py-3 font-semibold hover:border-neutral-400"
-              >
-                Browse the sample lessons ↓
-              </a>
-            </div>
-          </div>
-          {featured && <HeroPhone featured={featured} reportZh={report.zh} />}
+      <header className={`${container} pt-8`}>
+        <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+          For adult children helping an aging parent with their iPhone
+        </p>
+        <h1 className="mt-2 max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          Show your parent a phone task once. They practice it on their own
+          phone.
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg leading-relaxed text-neutral-600">
+          You record the steps. Your parent gets a link, practices each step on
+          pictures of the real screens, and is told exactly what went wrong
+          (&ldquo;you held too long&rdquo;), in Chinese. When they&apos;re done,
+          they text you back, or FaceTime you if they&apos;re stuck.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {featured && (
+            <Link
+              href={featured.practiceHref}
+              className="rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white hover:bg-neutral-800"
+            >
+              Try it as the parent →
+            </Link>
+          )}
+          <a
+            href="#make"
+            className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold hover:border-neutral-400"
+          >
+            Watch a helper make one (1½ min)
+          </a>
+          <a
+            href="#lessons"
+            className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold hover:border-neutral-400"
+          >
+            Browse the sample lessons ↓
+          </a>
         </div>
-      </section>
+      </header>
 
       <main className={`${container} pb-16`}>
-        <section id="how" className="scroll-mt-6 pt-14">
-          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
-            How it works
-          </p>
-          <h2 className="mt-1 text-3xl font-semibold tracking-tight">
-            One family loop, four steps
-          </h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section id="how" className="scroll-mt-6 pt-10">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {loop.map((s, i) => (
               <div key={s.title} className={`${card} flex flex-col p-6`}>
                 <span className={stepBadge}>{i + 1}</span>

@@ -34,7 +34,6 @@ describe("lessonCards", () => {
       iosVersion: "26",
       recordedOn: "iOS 26",
       thumb: "/lessons/wifi/step-0.jpg",
-      firstCaptionZh: null,
       practiceHref: "/l/wifi?demo=1",
       shareHref: "/share/wifi",
     });

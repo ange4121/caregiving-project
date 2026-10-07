@@ -19,8 +19,6 @@ export interface LessonCard {
   recordedOn: string;
   /** The lesson's first screen. */
   thumb: string;
-  /** The first step's instruction, as the parent sees it (Simplified Chinese). */
-  firstCaptionZh: string | null;
   /** Opens the lesson as the parent sees it, in demo mode. */
   practiceHref: string;
   /** The helper's "send this to my parent" page. */
@@ -41,7 +39,6 @@ export function lessonCards(
       iosVersion: m.ios_version,
       recordedOn: recordedOn(m),
       thumb: `/lessons/${m.id}/${m.steps[0]?.still ?? "step-0.jpg"}`,
-      firstCaptionZh: m.steps[0]?.caption_zh_hans ?? null,
       practiceHref: demoLessonHref(m.id),
       shareHref: `/share/${m.id}`,
     }))

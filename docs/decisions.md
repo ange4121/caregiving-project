@@ -2,6 +2,10 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-07 — Back to a short, plain hero
+
+- The visual hero (phone mock with floating feedback and report cards, coloured wash) read as too much of a sales pitch. Returned to the short hero (headline, one paragraph, three buttons) followed directly by the four steps. Kept the wider layout, top nav, green accents, and card styling.
+
 ## 2026-10-06 — Home page design pass
 
 - Wider layout (max ~1280 px) so wide screens don't show big empty margins.
