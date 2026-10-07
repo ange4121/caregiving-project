@@ -23,7 +23,7 @@ export default async function SharePage({ params }: PageProps<"/share/[id]">) {
   const manifest = await loadManifest(id);
   if (!manifest) notFound();
   return (
-    <div className="min-h-dvh bg-white">
+    <div className="min-h-dvh bg-cream text-navy">
       <PrototypeBanner />
       <ShareForm
         manifest={manifest}

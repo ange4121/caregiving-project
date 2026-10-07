@@ -248,6 +248,12 @@ All coordinates are **normalized 0–1** relative to the video frame.
 
 **Testing:** develop on desktop (Pointer Events work with a mouse), but check practice mode on a real iPhone via the Vercel preview at least every other day; finger timing and drift differ from a mouse.
 
+## Visual style (site pages)
+
+- Palette shared with the presentation: cream `#FBF2E3` background, navy `#192942` text, coral `#F17853` accent; supporting peach `#FCE4C6`, sand `#E8C195`, umber `#B48D6C`. Defined as Tailwind colours in `app/globals.css` (`bg-cream`, `text-navy`, `bg-coral`, …).
+- Coral is for fills (step numbers, underlines, highlights). For small coral text use `coral-deep` (`#B9472A`); plain coral on cream is too faint to read.
+- Applies to the home, share, and visitor-panel pages. The learner's lesson screen stays high-contrast black and white; the editor stays neutral.
+
 ## Learner UI rules
 
 - Base font ≥ 20 px; captions ≥ 24 px; buttons ≥ 60 px tall, full width.

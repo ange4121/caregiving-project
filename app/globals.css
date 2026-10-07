@@ -5,6 +5,20 @@
   --foreground: #171717;
 }
 
+/* Site palette (matches the presentation): warm cream, dark navy, coral
+   accent, plus peach / sand / umber supporting tones. The learner's lesson
+   screen stays high-contrast black and white. */
+@theme {
+  --color-cream: #fbf2e3;
+  --color-navy: #192942;
+  --color-coral: #f17853;
+  /* Coral is too light for small text on cream; use this for coral text. */
+  --color-coral-deep: #b9472a;
+  --color-peach: #fce4c6;
+  --color-sand: #e8c195;
+  --color-umber: #b48d6c;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

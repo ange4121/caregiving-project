@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-07 — Site palette matches the presentation
+
+- Cream / navy / coral (+ peach, sand, umber) as Tailwind theme colours, applied to the home page, share page, banner, and the laptop visitor panel.
+- Not applied to the learner's lesson screen (kept high-contrast black and white for older eyes) or the editor (a work tool).
+- Coral text on cream measures ~2.5:1, too faint for small text, so coral is used for fills and underlines, with a deeper coral (#B9472A) for small labels. Sage was left out (no hex given). The report-back bubble stays green because it depicts a real iPhone text message.
+
 ## 2026-10-07 — Feature "Making Text Size Bigger"
 
 - The home page's "Try it as the parent" (and the step links and library order) now lead with the Text size lesson: it's the one made in the Loom, mostly taps, and has little pixelation.

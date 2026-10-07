@@ -48,23 +48,23 @@ export default function LessonFrame({
   }, []);
 
   return (
-    <div className="lg:flex lg:h-dvh lg:items-center lg:justify-center lg:gap-12 lg:bg-neutral-100">
+    <div className="lg:flex lg:h-dvh lg:items-center lg:justify-center lg:gap-12 lg:bg-cream">
       <div className="lg:h-dvh lg:w-[430px] lg:shrink-0 lg:overflow-hidden lg:shadow-2xl">
         {children}
       </div>
       {!isShareLink && (
-        <aside className="hidden max-w-xs text-neutral-800 lg:block">
-          <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-semibold text-amber-900">
+        <aside className="hidden max-w-xs text-navy lg:block">
+          <span className="rounded-full bg-peach px-2.5 py-0.5 text-sm font-semibold text-coral-deep">
             Live prototype
           </span>
           <h2 className="mt-3 text-2xl font-semibold leading-snug">
             You&apos;re seeing what the parent sees.
           </h2>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-navy/75">
             Practice with your mouse here: click to tap, press and hold, or drag
             to swipe. Make a mistake on purpose to see the feedback.
           </p>
-          <p className="mt-2 text-neutral-600">
+          <p className="mt-2 text-navy/75">
             Parents get it in Chinese. Switch with 简 / 繁 at the top.
           </p>
           {qrSvg && (
@@ -74,12 +74,15 @@ export default function LessonFrame({
                 // Generated locally by the qrcode library from this page's URL.
                 dangerouslySetInnerHTML={{ __html: qrSvg }}
               />
-              <figcaption className="mt-2 text-sm text-neutral-600">
+              <figcaption className="mt-2 text-sm text-navy/75">
                 Or scan to try it on your iPhone, the way a parent would.
               </figcaption>
             </figure>
           )}
-          <Link href="/" className="mt-6 inline-block text-blue-700 underline">
+          <Link
+            href="/"
+            className="mt-6 inline-block text-navy underline decoration-coral decoration-2 underline-offset-4"
+          >
             ← How it works and all lessons
           </Link>
         </aside>

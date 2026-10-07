@@ -136,9 +136,9 @@ export default function ShareForm({
   };
 
   return (
-    <main className="mx-auto grid w-full max-w-5xl gap-10 px-5 py-8 text-neutral-900 md:grid-cols-[1fr_320px]">
+    <main className="mx-auto grid w-full max-w-5xl gap-10 px-5 py-8 text-navy md:grid-cols-[1fr_320px]">
       <div>
-        <p className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+        <p className="text-sm font-medium uppercase tracking-wide text-navy/60">
           Send a lesson
         </p>
         <div className="mt-3 flex gap-4">
@@ -146,18 +146,18 @@ export default function ShareForm({
           <img
             src={stillSrc}
             alt=""
-            className="h-28 w-auto rounded-lg border border-neutral-200"
+            className="h-28 w-auto rounded-lg border border-sand/60"
           />
           <div>
             <h1 className="text-2xl font-semibold leading-tight">
               {manifest.title_en}
             </h1>
-            <p className="mt-1 text-neutral-600">
+            <p className="mt-1 text-navy/75">
               {manifest.steps.length} steps · recorded on {recordedOn(manifest)}
             </p>
             <a
               href={`/l/${manifest.id}`}
-              className="mt-2 inline-block text-blue-700 underline"
+              className="mt-2 inline-block text-navy underline decoration-coral decoration-2 underline-offset-4"
             >
               Try it yourself
             </a>
@@ -167,7 +167,7 @@ export default function ShareForm({
         <button
           type="button"
           onClick={() => update(EXAMPLE, false)}
-          className="mt-6 rounded-full border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50"
+          className="mt-6 rounded-full border border-sand px-3 py-1.5 text-sm hover:bg-peach/60"
         >
           Just looking? Use example details
         </button>
@@ -186,7 +186,7 @@ export default function ShareForm({
                     update({ parentName: p.zh, parentNameEn: p.en })
                   }
                 >
-                  {p.zh} <span className="text-neutral-500">({p.en})</span>
+                  {p.zh} <span className="text-navy/60">({p.en})</span>
                 </Chip>
               ))}
               <input
@@ -198,7 +198,7 @@ export default function ShareForm({
                   })
                 }
                 placeholder="Other"
-                className="h-11 w-36 rounded-full border border-neutral-300 px-4"
+                className="h-11 w-36 rounded-full border border-sand px-4"
               />
             </div>
           </Field>
@@ -211,7 +211,7 @@ export default function ShareForm({
               value={form.childName}
               onChange={(e) => update({ childName: e.target.value })}
               placeholder="小雨"
-              className="h-12 w-full rounded-xl border border-neutral-300 px-4 text-lg"
+              className="h-12 w-full rounded-xl border border-sand px-4 text-lg"
             />
           </Field>
 
@@ -226,7 +226,7 @@ export default function ShareForm({
               inputMode="email"
               autoComplete="tel"
               className={`h-12 w-full rounded-xl border px-4 text-lg ${
-                contactOk ? "border-neutral-300" : "border-red-500"
+                contactOk ? "border-sand" : "border-red-500"
               }`}
             />
             {!contactOk && (
@@ -253,19 +253,19 @@ export default function ShareForm({
                 active={form.script === "zh-Hans"}
                 onClick={() => update({ script: "zh-Hans" })}
               >
-                简体 <span className="text-neutral-500">(Simplified)</span>
+                简体 <span className="text-navy/60">(Simplified)</span>
               </Chip>
               <Chip
                 active={form.script === "zh-Hant"}
                 onClick={() => update({ script: "zh-Hant" })}
               >
-                繁體 <span className="text-neutral-500">(Traditional)</span>
+                繁體 <span className="text-navy/60">(Traditional)</span>
               </Chip>
             </div>
           </Field>
         </section>
 
-        <section className="mt-10 rounded-2xl border border-neutral-200 bg-neutral-50 p-5">
+        <section className="mt-10 rounded-2xl border border-sand/60 bg-peach/60 p-5">
           <h2 className="font-semibold">Your message</h2>
           {isExample && (
             <p className="mt-1 text-sm text-amber-700">
@@ -275,8 +275,8 @@ export default function ShareForm({
           <p className="mt-3 whitespace-pre-wrap break-all text-lg leading-relaxed">
             {message}
           </p>
-          <p className="mt-3 border-t border-neutral-200 pt-3 text-neutral-600">
-            <span className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          <p className="mt-3 border-t border-sand/60 pt-3 text-navy/75">
+            <span className="text-sm font-medium uppercase tracking-wide text-navy/60">
               In English
             </span>
             <br />
@@ -288,7 +288,7 @@ export default function ShareForm({
                 onClick={() =>
                   navigator.share({ text: message }).catch(() => {})
                 }
-                className="h-12 flex-1 rounded-xl bg-neutral-900 font-semibold text-white"
+                className="h-12 flex-1 rounded-xl bg-navy font-semibold text-white"
               >
                 Share…
               </button>
@@ -296,16 +296,14 @@ export default function ShareForm({
             <button
               onClick={() => onCopy("message")}
               className={`h-12 flex-1 rounded-xl font-semibold ${
-                canShare
-                  ? "border border-neutral-300 bg-white"
-                  : "bg-neutral-900 text-white"
+                canShare ? "border border-sand bg-white" : "bg-navy text-cream"
               }`}
             >
               {copied === "message" ? "Copied ✓" : "Copy message"}
             </button>
             <button
               onClick={() => onCopy("link")}
-              className="h-12 flex-1 rounded-xl border border-neutral-300 bg-white font-semibold"
+              className="h-12 flex-1 rounded-xl border border-sand bg-white font-semibold"
             >
               {copied === "link" ? "Copied ✓" : "Copy link only"}
             </button>
@@ -314,13 +312,13 @@ export default function ShareForm({
             href={link}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-block text-blue-700 underline"
+            className="mt-4 inline-block text-navy underline decoration-coral decoration-2 underline-offset-4"
           >
             Open the link as your parent will see it
           </a>
         </section>
 
-        <p className="mt-6 text-sm text-neutral-500">
+        <p className="mt-6 text-sm text-navy/60">
           You send it yourself, from iMessage, WeChat, or WhatsApp. This app
           never messages your parent.
         </p>
@@ -351,7 +349,7 @@ function Field({
   return (
     <div>
       <label className="block text-lg font-semibold">{label}</label>
-      {hint && <p className="mb-2 text-sm text-neutral-600">{hint}</p>}
+      {hint && <p className="mb-2 text-sm text-navy/75">{hint}</p>}
       {!hint && <div className="mb-2" />}
       {children}
     </div>
@@ -374,8 +372,8 @@ function Chip({
       aria-pressed={active}
       className={`h-11 rounded-full border px-4 ${
         active
-          ? "border-neutral-900 bg-neutral-900 text-white [&_span]:text-neutral-300"
-          : "border-neutral-300 bg-white"
+          ? "border-navy bg-navy text-cream [&_span]:text-sand"
+          : "border-sand bg-white"
       }`}
     >
       {children}

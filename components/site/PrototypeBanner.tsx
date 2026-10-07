@@ -12,7 +12,7 @@ export default function PrototypeBanner({
       className={`border-b px-4 py-2 text-center text-sm ${
         tone === "amber"
           ? "border-amber-200 bg-amber-50 text-amber-900"
-          : "border-neutral-200 bg-neutral-50 text-neutral-700"
+          : "border-sand/60 bg-peach text-navy"
       }`}
     >
       <b>Live prototype.</b> These lessons are real and work on any iPhone.
