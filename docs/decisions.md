@@ -2,6 +2,13 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Home page design pass
+
+- Wider layout (max ~1280 px) so wide screens don't show big empty margins.
+- Hero shows the product before any reading: the real Wi-Fi lesson in a phone, with floating cards for the specific-mistake feedback and the parent's "I've got it" text (built by the same code as the real ones).
+- One accent colour (green, echoing the report-back bubble) for step numbers, labels, and links; a soft green-to-warm wash behind the hero; everything else black on white.
+- A simple top nav (How it works, Lessons, Editor, GitHub); cards share one style with a light hover shadow. Wording and links unchanged.
+
 ## 2026-10-06 — Home page: walk the loop, not just read it
 
 - The loop strip is now four steps (record → **send** → practice → report back); "send" was missing, and it's where the family channel shows. Each step links to where a visitor can see it: the Loom, the share page, the lesson demo.

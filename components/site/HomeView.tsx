@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LessonCard } from "@/lib/home";
 import { buildReportMessage } from "@/lib/report";
+import zhHans from "@/locales/zh-Hans.json";
 import { REPO_URL, SETUP_URL } from "@/lib/site";
 import PrototypeBanner from "./PrototypeBanner";
 
@@ -77,6 +78,65 @@ const MAKE_STEPS = [
 ];
 
 /** The public home page: what this is, two ways in, and the lesson library. */
+/** Hero picture: the real lesson in a phone, with the moments that matter around it. */
+function HeroPhone({
+  featured,
+  reportZh,
+}: {
+  featured: LessonCard;
+  reportZh: string;
+}) {
+  return (
+    <div className="relative mx-auto w-full max-w-[540px] py-4">
+      <div className="mx-auto w-[230px] rounded-[2.6rem] bg-neutral-900 p-2 shadow-2xl ring-1 ring-black/10 sm:w-[250px]">
+        <div className="overflow-hidden rounded-[2.1rem] bg-neutral-950 text-white">
+          <div className="px-4 pb-2 pt-4" lang="zh-Hans">
+            <p className="text-[11px] text-neutral-400">
+              第1步，共{featured.steps}步
+            </p>
+            <p className="text-sm font-semibold leading-snug">
+              {featured.firstCaptionZh ?? featured.titleZh ?? featured.titleEn}
+            </p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static still */}
+          <img src={featured.thumb} alt="" className="block w-full" />
+        </div>
+      </div>
+
+      <div className="absolute left-0 top-[36%] hidden w-48 -rotate-2 rounded-2xl border border-amber-200 bg-white p-3 shadow-lg sm:block">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">
+          Feedback on the exact mistake
+        </p>
+        <p lang="zh-Hans" className="mt-1 text-sm font-medium text-neutral-900">
+          {zhHans.errors.tap_too_long}
+        </p>
+        <p className="text-xs text-neutral-500">
+          You pressed too long. Like a doorbell: touch it and let go.
+        </p>
+      </div>
+
+      <div className="absolute bottom-12 right-0 hidden w-48 rotate-2 sm:block">
+        <p className="mb-1 text-right text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+          Then they text you
+        </p>
+        <p
+          lang="zh-Hans"
+          className="whitespace-pre-line rounded-2xl rounded-br-md bg-green-500 px-3 py-2 text-sm leading-snug text-white shadow-lg"
+        >
+          {reportZh}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const card =
+  "rounded-2xl border border-neutral-200 bg-white transition-shadow hover:shadow-md";
+const stepBadge =
+  "flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white";
+const container = "mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12";
+
+/** The public home page: what this is, the loop, two ways in, and the lesson library. */
 export default function HomeView({
   cards,
   helperVideoEmbed,
@@ -90,120 +150,155 @@ export default function HomeView({
   return (
     <div className="min-h-dvh bg-white text-neutral-900">
       <PrototypeBanner />
-      <main className="mx-auto w-full max-w-5xl px-5 pb-16 pt-10">
-        <p className="text-sm font-medium uppercase tracking-wide text-neutral-500">
-          For adult children helping an aging parent with their iPhone
-        </p>
-        <h1 className="mt-2 max-w-3xl text-3xl font-semibold leading-tight sm:text-4xl">
-          Show your parent a phone task once. They practice it on their own
-          phone.
-        </h1>
-        <p className="mt-4 max-w-2xl text-lg text-neutral-600">
-          You record the steps. Your parent gets a link, practices each step on
-          pictures of the real screens, and is told exactly what went wrong
-          (&ldquo;you held too long&rdquo;), in Chinese. When they&apos;re done,
-          they text you back, or FaceTime you if they&apos;re stuck.
-        </p>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          {featured && (
-            <Link
-              href={featured.practiceHref}
-              className="rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white"
-            >
-              Try it as the parent →
-            </Link>
-          )}
-          <a
-            href="#make"
-            className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold"
-          >
-            Watch a helper make one (1½ min)
+      <nav className={`${container} flex items-center gap-6 py-4 text-sm`}>
+        <Link href="/" className="text-base font-semibold tracking-tight">
+          Phone lessons
+        </Link>
+        <div className="ml-auto hidden items-center gap-6 text-neutral-600 sm:flex">
+          <a href="#how" className="hover:text-neutral-900">
+            How it works
           </a>
-          <a
-            href="#lessons"
-            className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold"
-          >
-            Browse the sample lessons ↓
+          <a href="#lessons" className="hover:text-neutral-900">
+            Lessons
+          </a>
+          <Link href="/editor" className="hover:text-neutral-900">
+            Editor
+          </Link>
+          <a href={REPO_URL} className="hover:text-neutral-900">
+            GitHub
           </a>
         </div>
+      </nav>
 
-        <section
-          id="how"
-          className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      <section className="bg-gradient-to-b from-emerald-50 via-amber-50/50 to-white">
+        <div
+          className={`${container} grid items-center gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_540px] lg:py-16`}
         >
-          {loop.map((s, i) => (
-            <div
-              key={s.title}
-              className="flex flex-col rounded-2xl border border-neutral-200 p-5"
-            >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 font-semibold text-white">
-                {i + 1}
-              </span>
-              <h2 className="mt-3 text-lg font-semibold">{s.title}</h2>
-              <p className="mt-1 text-neutral-600">{s.body}</p>
-              <p className="mt-3 text-sm font-medium text-neutral-500">
-                {s.where}
-              </p>
-              {s.link && (
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              For adult children helping an aging parent with their iPhone
+            </p>
+            <h1 className="mt-3 max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
+              Show your parent a phone task once. They practice it on their own
+              phone.
+            </h1>
+            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-neutral-600">
+              You record the steps. Your parent gets a link, practices each step
+              on pictures of the real screens, and is told exactly what went
+              wrong (&ldquo;you held too long&rdquo;), in Chinese. When
+              they&apos;re done, they text you back, or FaceTime you if
+              they&apos;re stuck.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {featured && (
                 <Link
-                  href={s.link.href}
-                  className="mt-auto pt-4 font-semibold text-blue-700 hover:underline"
+                  href={featured.practiceHref}
+                  className="rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white shadow-sm hover:bg-neutral-800"
                 >
-                  {s.link.label}
+                  Try it as the parent →
                 </Link>
               )}
+              <a
+                href="#make"
+                className="rounded-xl border border-neutral-300 bg-white px-5 py-3 font-semibold hover:border-neutral-400"
+              >
+                Watch a helper make one (1½ min)
+              </a>
+              <a
+                href="#lessons"
+                className="rounded-xl border border-neutral-300 bg-white px-5 py-3 font-semibold hover:border-neutral-400"
+              >
+                Browse the sample lessons ↓
+              </a>
             </div>
-          ))}
-          <div className="flex flex-col rounded-2xl border border-neutral-200 p-5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 font-semibold text-white">
-              4
-            </span>
-            <h2 className="mt-3 text-lg font-semibold">They report back</h2>
-            <p className="mt-1 text-neutral-600">
-              One tap at the end texts you:
-            </p>
-            <p
-              lang="zh-Hans"
-              className="mt-2 whitespace-pre-line rounded-2xl rounded-bl-md bg-green-500 px-3 py-2 text-sm leading-snug text-white"
-            >
-              {report.zh}
-            </p>
-            <p className="mt-1 whitespace-pre-line text-xs text-neutral-500">
-              {report.en}
-            </p>
-            <p className="mt-3 text-sm font-medium text-neutral-500">
-              Or they tap 📹 to FaceTime you.
-            </p>
+          </div>
+          {featured && <HeroPhone featured={featured} reportZh={report.zh} />}
+        </div>
+      </section>
+
+      <main className={`${container} pb-16`}>
+        <section id="how" className="scroll-mt-6 pt-14">
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            How it works
+          </p>
+          <h2 className="mt-1 text-3xl font-semibold tracking-tight">
+            One family loop, four steps
+          </h2>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {loop.map((s, i) => (
+              <div key={s.title} className={`${card} flex flex-col p-6`}>
+                <span className={stepBadge}>{i + 1}</span>
+                <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
+                <p className="mt-1 leading-relaxed text-neutral-600">
+                  {s.body}
+                </p>
+                <p className="mt-3 text-sm font-medium text-neutral-500">
+                  {s.where}
+                </p>
+                {s.link && (
+                  <Link
+                    href={s.link.href}
+                    className="mt-auto pt-5 font-semibold text-emerald-700 hover:underline"
+                  >
+                    {s.link.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+            <div className={`${card} flex flex-col p-6`}>
+              <span className={stepBadge}>4</span>
+              <h3 className="mt-4 text-lg font-semibold">They report back</h3>
+              <p className="mt-1 text-neutral-600">
+                One tap at the end texts you:
+              </p>
+              <p
+                lang="zh-Hans"
+                className="mt-2 whitespace-pre-line rounded-2xl rounded-bl-md bg-green-500 px-3 py-2 text-sm leading-snug text-white"
+              >
+                {report.zh}
+              </p>
+              <p className="mt-1 whitespace-pre-line text-xs text-neutral-500">
+                {report.en}
+              </p>
+              <p className="mt-3 text-sm font-medium text-neutral-500">
+                Or they tap 📹 to FaceTime you.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section className="mt-12 grid gap-6 md:grid-cols-2 md:items-start">
+        <section className="mt-16 grid gap-6 lg:grid-cols-2 lg:items-start">
           {featured && (
-            <div className="flex flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-6">
-              <h2 className="text-2xl font-semibold">
+            <div className={`${card} flex flex-col bg-neutral-50 p-6 sm:p-8`}>
+              <h2 className="text-2xl font-semibold tracking-tight">
                 Try a lesson as the parent
               </h2>
-              <p className="mt-2 text-neutral-600">
+              <p className="mt-2 leading-relaxed text-neutral-600">
                 Watch it once, then practice. Get a step wrong on purpose to see
                 the feedback. At the end you&apos;ll see what the parent&apos;s
                 &ldquo;I&apos;ve got it&rdquo; text to the helper looks like.
               </p>
-              <div className="mt-5 flex items-center gap-5">
+              <div className="mt-6 flex items-center gap-6">
                 {/* eslint-disable-next-line @next/next/no-img-element -- static still */}
                 <img
                   src={featured.thumb}
                   alt=""
-                  className="h-56 w-auto rounded-xl border-4 border-neutral-900"
+                  className="h-56 w-auto rounded-[1.4rem] border-[6px] border-neutral-900 shadow-lg"
                 />
                 <div>
-                  <p className="font-semibold">{featured.titleEn}</p>
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-lg font-semibold">{featured.titleEn}</p>
+                  {featured.titleZh && (
+                    <p lang="zh-Hans" className="text-neutral-600">
+                      {featured.titleZh}
+                    </p>
+                  )}
+                  <p className="mt-1 text-sm text-neutral-500">
                     {featured.steps} steps
                   </p>
                   <Link
                     href={featured.practiceHref}
-                    className="mt-3 inline-block rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white"
+                    className="mt-4 inline-block rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white hover:bg-neutral-800"
                   >
                     Try it →
                   </Link>
@@ -215,8 +310,8 @@ export default function HomeView({
             </div>
           )}
 
-          <div id="make" className="rounded-2xl border border-neutral-200 p-6">
-            <h2 className="text-2xl font-semibold">
+          <div id="make" className={`${card} scroll-mt-6 p-6 sm:p-8`}>
+            <h2 className="text-2xl font-semibold tracking-tight">
               See how a helper makes one
             </h2>
             {helperVideoEmbed ? (
@@ -229,13 +324,21 @@ export default function HomeView({
                 />
               </div>
             ) : null}
-            <ol className="mt-4 list-decimal space-y-2 pl-5 text-neutral-700">
-              {MAKE_STEPS.map((s) => (
-                <li key={s}>{s}</li>
+            <ol className="mt-5 space-y-3">
+              {MAKE_STEPS.map((s, i) => (
+                <li key={s} className="flex gap-3 text-neutral-700">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-800">
+                    {i + 1}
+                  </span>
+                  <span>{s}</span>
+                </li>
               ))}
             </ol>
-            <p className="mt-4 text-sm text-neutral-600">
-              <Link href="/editor" className="text-blue-700 underline">
+            <p className="mt-5 text-sm text-neutral-600">
+              <Link
+                href="/editor"
+                className="font-semibold text-emerald-700 underline"
+              >
                 Open the editor
               </Link>{" "}
               to try marking steps by hand. Finding steps automatically and
@@ -249,45 +352,49 @@ export default function HomeView({
           </div>
         </section>
 
-        <section id="lessons" className="mt-14">
-          <h2 className="text-2xl font-semibold">Lessons</h2>
-          <p className="mt-1 max-w-2xl text-neutral-600">
+        <section id="lessons" className="scroll-mt-6 pt-16">
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            Public library
+          </p>
+          <h2 className="mt-1 text-3xl font-semibold tracking-tight">
+            Lessons
+          </h2>
+          <p className="mt-2 max-w-2xl leading-relaxed text-neutral-600">
             Open-library lessons: everyday phone tasks anyone can use. Lessons
             for a specific account, like a bank, stay private to one family and
             aren&apos;t shown here.
           </p>
-          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((c) => (
-              <li
-                key={c.id}
-                className="flex gap-4 rounded-2xl border border-neutral-200 p-4"
-              >
+              <li key={c.id} className={`${card} flex gap-5 p-5`}>
                 {/* eslint-disable-next-line @next/next/no-img-element -- static still */}
                 <img
                   src={c.thumb}
                   alt=""
-                  className="h-28 w-auto shrink-0 rounded-lg border-2 border-neutral-900"
+                  className="h-36 w-auto shrink-0 rounded-xl border-4 border-neutral-900"
                 />
                 <div className="flex min-w-0 flex-col">
-                  <p className="font-semibold leading-snug">{c.titleEn}</p>
+                  <p className="text-lg font-semibold leading-snug">
+                    {c.titleEn}
+                  </p>
                   {c.titleZh && (
-                    <p lang="zh-Hans" className="text-sm text-neutral-600">
+                    <p lang="zh-Hans" className="text-neutral-600">
                       {c.titleZh}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-2 text-xs text-neutral-500">
                     {c.steps} steps · recorded on {c.recordedOn}
                   </p>
-                  <div className="mt-auto flex gap-2 pt-3">
+                  <div className="mt-auto flex gap-2 pt-4">
                     <Link
                       href={c.practiceHref}
-                      className="rounded-full border border-neutral-300 px-3 py-1.5 text-sm"
+                      className="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-medium hover:border-neutral-400"
                     >
                       Practice
                     </Link>
                     <Link
                       href={c.shareHref}
-                      className="rounded-full bg-neutral-900 px-3 py-1.5 text-sm text-white"
+                      className="rounded-full bg-neutral-900 px-4 py-1.5 text-sm font-medium text-white hover:bg-neutral-800"
                     >
                       Share
                     </Link>
@@ -298,12 +405,15 @@ export default function HomeView({
           </ul>
         </section>
 
-        <footer className="mt-16 border-t border-neutral-200 pt-6 text-sm text-neutral-500">
-          Open source (AGPL-3.0) ·{" "}
+        <footer className="mt-20 flex flex-wrap gap-x-2 border-t border-neutral-200 pt-6 text-sm text-neutral-500">
+          <span>Open source (AGPL-3.0)</span>·
           <a href={REPO_URL} className="underline">
             GitHub
-          </a>{" "}
-          · Built for the Assembly Code Incubator, Cohort 02 (caregiving)
+          </a>
+          ·
+          <span>
+            Built for the Assembly Code Incubator, Cohort 02 (caregiving)
+          </span>
         </footer>
       </main>
     </div>
