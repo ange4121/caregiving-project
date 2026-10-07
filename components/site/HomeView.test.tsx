@@ -40,6 +40,9 @@ describe("HomeView", () => {
 
   it("the main button opens the featured lesson in demo mode", () => {
     expect(html).toContain("Try it →");
+    expect(html).toContain("Try it as the parent →");
+    expect(html).toContain("Watch a helper make one (1½ min)");
+    expect(html).toContain('href="#lessons"');
     expect(html.indexOf('href="/l/wifi?demo=1"')).toBeLessThan(
       html.indexOf('href="/l/kb?demo=1"'),
     );
@@ -67,5 +70,34 @@ describe("HomeView", () => {
 
   it("still renders with no lessons", () => {
     expect(render([])).toContain("See how a helper makes one");
+  });
+});
+
+describe("HomeView loop", () => {
+  const html = render([
+    { ...card("wifi", "Get onto Wi-Fi"), titleZh: "连上 Wi-Fi" },
+  ]);
+
+  it("shows all four steps in order", () => {
+    const order = [
+      "You record it",
+      "You send it",
+      "Your parent practices",
+      "They report back",
+    ].map((t) => html.indexOf(t));
+    expect(order.every((i) => i > 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+
+  it("links each step to where you can see it", () => {
+    expect(html).toContain('href="#make"');
+    expect(html).toContain("See the message →");
+    expect(html).toContain('href="/share/wifi"');
+  });
+
+  it("shows the real report-back text a parent sends", () => {
+    expect(html).toContain("我练完了：连上 Wi-Fi ✓");
+    expect(html).toContain("第2步试了2次（放手太早）");
+    expect(html).toContain("Step 2: 2 tries (let go too early)");
   });
 });

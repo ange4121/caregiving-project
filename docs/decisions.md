@@ -2,6 +2,12 @@
 
 Newest first. Each entry: date, decision, options considered, why.
 
+## 2026-10-06 — Home page: walk the loop, not just read it
+
+- The loop strip is now four steps (record → **send** → practice → report back); "send" was missing, and it's where the family channel shows. Each step links to where a visitor can see it: the Loom, the share page, the lesson demo.
+- Step 4 shows the actual report-back text a parent sends, built by the same code as the lesson's end screen, so visitors see the payoff without finishing a lesson.
+- Top buttons say what happens: "Try it as the parent →", "Watch a helper make one (1½ min)", and "Browse the sample lessons ↓".
+
 ## 2026-10-06 — Say plainly that making lessons needs a developer setup
 
 - "Runs on the helper's laptop" implied any helper could do it. Today it needs Node.js, ffmpeg, this repo, and `npm run dev`, and publishing only writes into that copy. The site now says "runs on the author's computer for now (a developer setup with Node.js and ffmpeg)" in the banner, home page, and editor, linking to the README's "Make a lesson" section. Any helper can still send public lessons with no setup.

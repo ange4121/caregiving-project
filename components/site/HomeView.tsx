@@ -1,25 +1,73 @@
 import Link from "next/link";
 import type { LessonCard } from "@/lib/home";
+import { buildReportMessage } from "@/lib/report";
 import { REPO_URL, SETUP_URL } from "@/lib/site";
 import PrototypeBanner from "./PrototypeBanner";
 
-const LOOP = [
-  {
-    title: "You record it",
-    body: "Screen-record the task on your iPhone. The editor finds the steps; you name them and pixelate anything private.",
-    where: "On your laptop",
-  },
-  {
-    title: "Your parent practices",
-    body: "One link, one task. They do each tap, hold, and swipe on pictures of the real screens and are told exactly what went wrong.",
-    where: "On their iPhone, in Chinese",
-  },
-  {
-    title: "They report back",
-    body: "“I've got it” texts you a summary of how it went. “I need help” starts a FaceTime call to you.",
-    where: "No accounts, no app to install",
-  },
-];
+/** The loop, in order. Each step links to where a visitor can see that piece. */
+function loopSteps(featured: LessonCard | undefined) {
+  return [
+    {
+      title: "You record it",
+      body: "Screen-record the task on your iPhone. The editor finds the steps; you name them and pixelate anything private.",
+      where: "On your laptop",
+      link: { href: "#make", label: "Watch a helper make one (1½ min) ↓" },
+    },
+    {
+      title: "You send it",
+      body: "A ready-written message in Chinese with the link, sent from your own phone through iMessage, WeChat, or WhatsApp.",
+      where: "The app never messages your parent",
+      link: featured
+        ? { href: featured.shareHref, label: "See the message →" }
+        : null,
+    },
+    {
+      title: "Your parent practices",
+      body: "One link, one task. They do each tap, hold, and swipe on pictures of the real screens and are told exactly what went wrong.",
+      where: "On their iPhone, in Chinese",
+      link: featured
+        ? { href: featured.practiceHref, label: "Try it as the parent →" }
+        : null,
+    },
+  ];
+}
+
+/**
+ * The text a parent sends at the end of a lesson, built by the same code the
+ * lesson uses (here: step 2 took two tries).
+ */
+function sampleReport(featured: LessonCard | undefined) {
+  const text = buildReportMessage({
+    script: "zh-Hans",
+    titleZh: featured?.titleZh ?? undefined,
+    titleEn: featured?.titleEn ?? "Get onto Wi-Fi",
+    log: [
+      {
+        step: 0,
+        ok: true,
+        error: null,
+        durationMs: 120,
+        ambiguousPress: false,
+      },
+      {
+        step: 1,
+        ok: false,
+        error: "hold_too_short",
+        durationMs: 300,
+        ambiguousPress: false,
+      },
+      {
+        step: 1,
+        ok: true,
+        error: null,
+        durationMs: 800,
+        ambiguousPress: false,
+      },
+    ],
+  });
+  const [zh, en] = text.split("\n—\n");
+  return { zh, en };
+}
 
 const MAKE_STEPS = [
   "Screen-record the task on your iPhone.",
@@ -37,6 +85,8 @@ export default function HomeView({
   helperVideoEmbed: string | null;
 }) {
   const featured = cards[0];
+  const loop = loopSteps(featured);
+  const report = sampleReport(featured);
   return (
     <div className="min-h-dvh bg-white text-neutral-900">
       <PrototypeBanner />
@@ -61,22 +111,31 @@ export default function HomeView({
               href={featured.practiceHref}
               className="rounded-xl bg-neutral-900 px-5 py-3 font-semibold text-white"
             >
-              Try a lesson as the parent →
+              Try it as the parent →
             </Link>
           )}
           <a
             href="#make"
             className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold"
           >
-            See how a helper makes one
+            Watch a helper make one (1½ min)
+          </a>
+          <a
+            href="#lessons"
+            className="rounded-xl border border-neutral-300 px-5 py-3 font-semibold"
+          >
+            Browse the sample lessons ↓
           </a>
         </div>
 
-        <section id="how" className="mt-10 grid gap-4 sm:grid-cols-3">
-          {LOOP.map((s, i) => (
+        <section
+          id="how"
+          className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {loop.map((s, i) => (
             <div
               key={s.title}
-              className="rounded-2xl border border-neutral-200 p-5"
+              className="flex flex-col rounded-2xl border border-neutral-200 p-5"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 font-semibold text-white">
                 {i + 1}
@@ -86,8 +145,37 @@ export default function HomeView({
               <p className="mt-3 text-sm font-medium text-neutral-500">
                 {s.where}
               </p>
+              {s.link && (
+                <Link
+                  href={s.link.href}
+                  className="mt-auto pt-4 font-semibold text-blue-700 hover:underline"
+                >
+                  {s.link.label}
+                </Link>
+              )}
             </div>
           ))}
+          <div className="flex flex-col rounded-2xl border border-neutral-200 p-5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 font-semibold text-white">
+              4
+            </span>
+            <h2 className="mt-3 text-lg font-semibold">They report back</h2>
+            <p className="mt-1 text-neutral-600">
+              One tap at the end texts you:
+            </p>
+            <p
+              lang="zh-Hans"
+              className="mt-2 whitespace-pre-line rounded-2xl rounded-bl-md bg-green-500 px-3 py-2 text-sm leading-snug text-white"
+            >
+              {report.zh}
+            </p>
+            <p className="mt-1 whitespace-pre-line text-xs text-neutral-500">
+              {report.en}
+            </p>
+            <p className="mt-3 text-sm font-medium text-neutral-500">
+              Or they tap 📹 to FaceTime you.
+            </p>
+          </div>
         </section>
 
         <section className="mt-12 grid gap-6 md:grid-cols-2 md:items-start">
